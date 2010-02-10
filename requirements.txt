@@ -1,0 +1,7 @@
+# These are the reqs to build docs and run tests.
+sphinx
+jinja2
+nose
+mock
+-e svn+http://code.djangoproject.com/svn/django/trunk@12335#egg=Django
+fabric

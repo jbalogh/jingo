@@ -1,0 +1,1 @@
+JINJA_CONFIG = {}
