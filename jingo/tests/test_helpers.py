@@ -30,6 +30,9 @@ def test_datetime():
     s = render('{{ d|datetime("%Y-%m-%d %H:%M:%S") }}', {'d': time})
     eq_(s, '2009-12-25 10:11:12')
 
+    s = render('{{ None|datetime }}')
+    eq_(s, '')
+
 
 def test_ifeq():
     eq_context = {'a': 1, 'b': 1}
