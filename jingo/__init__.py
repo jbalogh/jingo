@@ -62,7 +62,10 @@ def render(request, template, context=None, **kwargs):
         context = {}
     for processor in get_standard_processors():
         context.update(processor(request))
-    rendered = env.get_template(template).render(**context)
+    # If it's not a Template, it must be a path to be loaded.
+    if not isinstance(template, jinja2.environment.Template):
+        template = env.get_template(template)
+    rendered = template.render(**context)
     return http.HttpResponse(rendered, **kwargs)
 
 
