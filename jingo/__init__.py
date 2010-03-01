@@ -10,6 +10,9 @@ VERSION = (0, 3)
 __version__ = '.'.join(map(str, VERSION))
 
 
+_helpers_loaded = False
+
+
 def get_env():
     """Configure and return a jinja2 Environment."""
     # Mimic Django's setup by loading templates from directories in
@@ -52,6 +55,9 @@ def render(request, template, context=None, **kwargs):
         return jingo.render(request, 'template.html',
                             {'some_var': 42}, status=209)
     """
+    if not _helpers_loaded:
+        load_helpers()
+
     if context is None:
         context = {}
     for processor in get_standard_processors():
@@ -62,11 +68,16 @@ def render(request, template, context=None, **kwargs):
 
 def load_helpers():
     """Try to import ``helpers.py`` from each app in INSTALLED_APPS."""
+    # We want to wait as long as possible to load helpers so there aren't any
+    # weird circular imports with jingo.
+    global _helpers_loaded
+    from . import helpers
     for app in settings.INSTALLED_APPS:
         try:
             __import__('%s.helpers' % app)
         except ImportError:
             pass
+    _helpers_loaded = True
 
 
 class Register(object):
@@ -88,7 +99,3 @@ class Register(object):
 
 env = get_env()
 register = Register(env)
-
-# Import down here after the env is initialized.
-from . import helpers
-load_helpers()
