@@ -55,6 +55,14 @@ def render(request, template, context=None, **kwargs):
         return jingo.render(request, 'template.html',
                             {'some_var': 42}, status=209)
     """
+    rendered = render_to_string(request, template, context)
+    return http.HttpResponse(rendered, **kwargs)
+
+
+def render_to_string(request, template, context=None):
+    """
+    Render a template into a string.
+    """
     if not _helpers_loaded:
         load_helpers()
 
@@ -65,8 +73,7 @@ def render(request, template, context=None, **kwargs):
     # If it's not a Template, it must be a path to be loaded.
     if not isinstance(template, jinja2.environment.Template):
         template = env.get_template(template)
-    rendered = template.render(**context)
-    return http.HttpResponse(rendered, **kwargs)
+    return template.render(**context)
 
 
 def load_helpers():
