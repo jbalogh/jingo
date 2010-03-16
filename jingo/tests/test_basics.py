@@ -1,3 +1,5 @@
+import jinja2
+
 from nose.tools import eq_
 from mock import Mock, patch, sentinel
 
@@ -23,3 +25,9 @@ def test_render_to_string(mock_env):
     rendered = jingo.render_to_string(Mock(), template, {'answer': 42})
 
     eq_(rendered, 'The answer is 42')
+
+
+def test_render_with_Template():
+    template = jinja2.Environment().from_string('xxx')
+    response = jingo.render(Mock(), template)
+    eq_(response.content, 'xxx')
