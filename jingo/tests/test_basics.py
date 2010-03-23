@@ -31,3 +31,13 @@ def test_render_with_Template():
     template = jinja2.Environment().from_string('xxx')
     response = jingo.render(Mock(), template)
     eq_(response.content, 'xxx')
+
+
+@patch('jingo.env.get_template')
+def test_inclusion_tag(get_template):
+    @jingo.register.inclusion_tag('xx.html')
+    def tag(x):
+        return {'z': x}
+    get_template.return_value = jinja2.environment.Template('<{{ z }}>')
+    t = jingo.env.from_string('{{ tag(1) }}')
+    eq_('<1>', t.render())

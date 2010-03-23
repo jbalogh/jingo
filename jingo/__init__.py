@@ -1,4 +1,5 @@
 """Adapter for using Jinja2 with Django."""
+import functools
 
 from django import http
 from django.conf import settings
@@ -106,6 +107,16 @@ class Register(object):
         self.env.globals[f.__name__] = f
         return f
 
+    def inclusion_tag(self, template):
+        """Adds a function to Jinja, but like Django's @inclusion_tag."""
+        def decorator(f):
+            @functools.wraps(f)
+            def wrapper(*args, **kw):
+                context = f(*args, **kw)
+                t = env.get_template(template).render(context)
+                return jinja2.Markup(t)
+            return self.function(wrapper)
+        return decorator
 
 env = get_env()
 register = Register(env)
