@@ -27,6 +27,8 @@ def f(string, *args, **kwargs):
 @register.filter
 def nl2br(string):
     """Turn newlines into <br>."""
+    if not string:
+        return ''
     return jinja2.Markup('<br>'.join(jinja2.escape(string).splitlines()))
 
 

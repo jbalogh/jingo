@@ -21,6 +21,10 @@ def test_nl2br():
     s = render('{{ x|nl2br }}', {'x': text})
     eq_(s, "some<br>text<br><br>with<br>newlines")
 
+    text = None
+    s = render('{{ x|nl2br }}', {'x': text})
+    eq_(s, '')
+
 
 def test_datetime():
     time = datetime(2009, 12, 25, 10, 11, 12)
