@@ -26,10 +26,11 @@ def doc(kind='html'):
     with cd('docs'):
         local('make clean %s' % kind)
 
+def shell():
+    local('django-admin.py shell')
 
 def test():
     local('nosetests')
-
 
 def updoc():
     doc('dirhtml')

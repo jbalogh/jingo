@@ -4,4 +4,5 @@ jinja2
 nose
 mock
 -e svn+http://code.djangoproject.com/svn/django/trunk@12335#egg=Django
+-e git://github.com/clouserw/tower.git#egg=tower
 fabric
