@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 """Tests for the jingo's builtin helpers."""
 from datetime import datetime
 
 from nose.tools import eq_
 
 import jingo
+from jingo import helpers
 
 
 def render(s, context={}):
@@ -36,6 +38,11 @@ def test_datetime():
 
     s = render('{{ None|datetime }}')
     eq_(s, '')
+
+
+def test_datetime_unicode():
+    fmt = u"%Y 年 %m 月 %e 日"
+    helpers.datetime(datetime.now(), fmt)
 
 
 def test_ifeq():

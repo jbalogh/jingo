@@ -33,9 +33,11 @@ def nl2br(string):
 
 
 @register.filter
-def datetime(t, format=_('%B %e, %Y')):
+def datetime(t, fmt=None):
     """Call ``datetime.strftime`` with the given format string."""
-    return t.strftime(format) if t else ''
+    if fmt is None:
+        fmt = _('%B %e, %Y')
+    return t.strftime(fmt.encode('utf-8')) if t else ''
 
 
 @register.filter
