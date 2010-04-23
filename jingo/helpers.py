@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext as _
 from django.template.defaulttags import CsrfTokenNode
+from django.utils.encoding import smart_unicode
 
 import jinja2
 
@@ -37,7 +38,7 @@ def datetime(t, fmt=None):
     """Call ``datetime.strftime`` with the given format string."""
     if fmt is None:
         fmt = _('%B %e, %Y')
-    return t.strftime(fmt.encode('utf-8')) if t else ''
+    return smart_unicode(t.strftime(fmt.encode('utf-8'))) if t else u''
 
 
 @register.filter
