@@ -69,19 +69,21 @@ def render_to_string(request, template, context=None):
     if not _helpers_loaded:
         load_helpers()
 
-    if context is None:
-        context = {}
-    for processor in get_standard_processors():
-        context.update(processor(request))
+    def get_context():
+        c = {} if context is None else context.copy()
+        for processor in get_standard_processors():
+            c.update(processor(request))
+        return c
+
     # If it's not a Template, it must be a path to be loaded.
     if not isinstance(template, jinja2.environment.Template):
         template = env.get_template(template)
     try:
-        ret = template.render(**context)
+        ret = template.render(**get_context())
     except KeyError:
         _lang = trans_real.get_language()
         tower.deactivate_all()
-        ret = template.render(**context)
+        ret = template.render(**get_context())
         tower.activate(_lang)
     return ret
 
