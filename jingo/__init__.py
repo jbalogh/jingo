@@ -8,7 +8,6 @@ from django.template.context import get_standard_processors
 from django.utils.translation import trans_real
 
 import jinja2
-import tower
 
 VERSION = (0, 3)
 __version__ = '.'.join(map(str, VERSION))
@@ -81,14 +80,8 @@ def render_to_string(request, template, context=None):
     # If it's not a Template, it must be a path to be loaded.
     if not isinstance(template, jinja2.environment.Template):
         template = env.get_template(template)
-    try:
-        ret = template.render(**get_context())
-    except KeyError:
-        _lang = trans_real.get_language()
-        tower.deactivate_all()
-        ret = template.render(**get_context())
-        tower.activate(_lang)
-    return ret
+
+    return template.render(**get_context())
 
 
 def load_helpers():

@@ -1,11 +1,12 @@
+from django.utils import translation
 from mock import Mock, patch, sentinel
 
+import jinja2
 from nose.tools import eq_
 from test_helpers import render
+
 import jingo.views
 from jingo import get_env
-import jinja2
-import tower
 
 
 @patch('jingo.render')
@@ -16,7 +17,7 @@ def test_direct_to_template(mock_render):
 
 
 def test_template_substitution_crash():
-    tower.activate('xx')
+    translation.activate('xx')
 
     env = get_env()
 
