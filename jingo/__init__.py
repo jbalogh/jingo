@@ -1,5 +1,6 @@
 """Adapter for using Jinja2 with Django."""
 import functools
+import logging
 
 from django import http
 from django.conf import settings
@@ -11,6 +12,8 @@ import tower
 
 VERSION = (0, 3)
 __version__ = '.'.join(map(str, VERSION))
+
+log = logging.getLogger('z.jingo')
 
 
 _helpers_loaded = False
@@ -131,3 +134,24 @@ class Register(object):
 
 env = get_env()
 register = Register(env)
+
+
+def safe_getitem(self, key):
+    """
+    We don't want localizers to take down the site when their string
+    interpolation variables don't match the real strings.
+
+    If we have {% trans users=... %}blah {{ users }}{% endtrans %}
+    and the localizer has "blah %(user)s" in their gettext catalog, there will
+    be a KeyError when Python looks for the users variable.
+
+    This also fixes bug 560381, which was a beast.
+    """
+    try:
+        return self.obj[key]
+    except KeyError:
+        lang = trans_real.get_language()
+        log.error(u'[%s] KeyError: %r in %r' % (lang, key, self.obj))
+
+from jinja2.utils import _MarkupEscapeHelper
+_MarkupEscapeHelper.__getitem__ = safe_getitem
