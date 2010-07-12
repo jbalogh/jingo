@@ -18,6 +18,15 @@ log = logging.getLogger('z.jingo')
 _helpers_loaded = False
 
 
+class Environment(jinja2.Environment):
+
+    def get_template(self, name, parent=None, globals=None):
+        """Make sure our helpers get loaded before any templates."""
+        if not _helpers_loaded:
+            load_helpers()
+        return super(Environment, self).get_template(name, parent, globals)
+
+
 def get_env():
     """Configure and return a jinja2 Environment."""
     # Mimic Django's setup by loading templates from directories in
@@ -40,7 +49,7 @@ def get_env():
             config = settings.JINJA_CONFIG
         opts.update(config)
 
-    e = jinja2.Environment(**opts)
+    e = Environment(**opts)
     # TODO: use real translations
     e.install_null_translations()
     return e
@@ -68,9 +77,6 @@ def render_to_string(request, template, context=None):
     """
     Render a template into a string.
     """
-    if not _helpers_loaded:
-        load_helpers()
-
     def get_context():
         c = {} if context is None else context.copy()
         for processor in get_standard_processors():
