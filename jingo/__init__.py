@@ -26,6 +26,12 @@ class Environment(jinja2.Environment):
             load_helpers()
         return super(Environment, self).get_template(name, parent, globals)
 
+    def from_string(self, source, globals=None, template_class=None):
+        if not _helpers_loaded:
+            load_helpers()
+        return super(Environment, self).from_string(source, globals,
+                                                    template_class)
+
 
 def get_env():
     """Configure and return a jinja2 Environment."""
