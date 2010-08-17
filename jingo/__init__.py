@@ -141,22 +141,48 @@ env = get_env()
 register = Register(env)
 
 
-def safe_getitem(self, key):
+from jinja2 import utils
+
+
+class _MarkupEscapeHelper(object):
     """
-    We don't want localizers to take down the site when their string
-    interpolation variables don't match the real strings.
-
-    If we have {% trans users=... %}blah {{ users }}{% endtrans %}
-    and the localizer has "blah %(user)s" in their gettext catalog, there will
-    be a KeyError when Python looks for the users variable.
-
-    This also fixes bug 560381, which was a beast.
+    A replacement for jinja's _MarkupEscapeHandler that doesn't use lambdas.
+    Exceptions in the lambdas seem to cause the gc_refs crashes from
+    bug 560381.
     """
-    try:
-        return self.obj[key]
-    except KeyError:
-        lang = trans_real.get_language()
-        log.error(u'[%s] KeyError: %r in %r' % (lang, key, self.obj))
 
-from jinja2.utils import _MarkupEscapeHelper
-_MarkupEscapeHelper.__getitem__ = safe_getitem
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __getitem__(self, key):
+        """
+        We don't want localizers to take down the site when their string
+        interpolation variables don't match the real strings.
+
+        If we have {% trans users=... %}blah {{ users }}{% endtrans %}
+        and the localizer has "blah %(user)s" in their gettext catalog, there will
+        be a KeyError when Python looks for the users variable.
+        """
+        try:
+            return self.obj[key]
+        except KeyError:
+            lang = trans_real.get_language()
+            log.error(u'[%s] KeyError: %r in %r' % (lang, key, self.obj))
+
+    def __str__(self):
+        return str(utils.escape(self.obj))
+
+    def __unicode__(self):
+        return unicode(utils.escape(self.obj))
+
+    def __repr__(self):
+        return str(utils.escape(repr(self.obj)))
+
+    def __int__(self):
+        return int(self.obj)
+
+    def __float__(self):
+        return float(self.obj)
+
+
+utils._MarkupEscapeHelper = _MarkupEscapeHelper
