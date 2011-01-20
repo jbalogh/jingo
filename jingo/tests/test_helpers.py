@@ -2,6 +2,7 @@
 """Tests for the jingo's builtin helpers."""
 from datetime import datetime
 
+from jinja2 import Markup
 from nose.tools import eq_
 
 import jingo
@@ -16,6 +17,32 @@ def render(s, context={}):
 def test_f():
     s = render('{{ "{0} : {z}"|f("a", z="b") }}')
     eq_(s, 'a : b')
+
+
+def test_fe_helper():
+    context = {'var': '<bad>'}
+    template = '{{ "<em>{t}</em>"|fe(t=var) }}'
+    eq_('<em>&lt;bad&gt;</em>', render(template, context))
+
+
+def test_fe_positional():
+    context = {'var': '<bad>'}
+    template = '{{ "<em>{0}</em>"|fe(var) }}'
+    eq_('<em>&lt;bad&gt;</em>', render(template, context))
+
+
+def test_fe_unicode():
+    context = {'var': u'Français'}
+    template = '{{ "Speak {0}"|fe(var) }}'
+    eq_(u'Speak Français', render(template, context))
+
+
+def test_fe_markup():
+    context = {'var': Markup('<mark>safe</mark>')}
+    template = '{{ "<em>{0}</em>"|fe(var) }}'
+    eq_('<em><mark>safe</mark></em>', render(template, context))
+    template = '{{ "<em>{t}</em>"|fe(t=var) }}'
+    eq_('<em><mark>safe</mark></em>', render(template, context))
 
 
 def test_nl2br():

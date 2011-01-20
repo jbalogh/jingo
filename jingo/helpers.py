@@ -26,6 +26,21 @@ def f(string, *args, **kwargs):
 
 
 @register.filter
+def fe(string, *args, **kwargs):
+    """Format a safe string with potentially unsafe arguments, then return a
+    safe string."""
+
+    string = unicode(string)
+
+    args = [jinja2.escape(smart_unicode(v)) for v in args]
+
+    for k in kwargs:
+        kwargs[k] = jinja2.escape(smart_unicode(kwargs[k]))
+
+    return jinja2.Markup(string.format(*args, **kwargs))
+
+
+@register.filter
 def nl2br(string):
     """Turn newlines into <br>."""
     if not string:
