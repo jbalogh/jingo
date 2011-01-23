@@ -1,10 +1,12 @@
 """Adapter for using Jinja2 with Django."""
 import functools
+import imp
 import logging
 
 from django import http
 from django.conf import settings
 from django.template.context import get_standard_processors
+from django.utils.importlib import import_module
 from django.utils.translation import trans_real
 
 import jinja2
@@ -22,13 +24,11 @@ class Environment(jinja2.Environment):
 
     def get_template(self, name, parent=None, globals=None):
         """Make sure our helpers get loaded before any templates."""
-        if not _helpers_loaded:
-            load_helpers()
+        load_helpers()
         return super(Environment, self).get_template(name, parent, globals)
 
     def from_string(self, source, globals=None, template_class=None):
-        if not _helpers_loaded:
-            load_helpers()
+        load_helpers()
         return super(Environment, self).from_string(source, globals,
                                                     template_class)
 
@@ -101,13 +101,24 @@ def load_helpers():
     # We want to wait as long as possible to load helpers so there aren't any
     # weird circular imports with jingo.
     global _helpers_loaded
-    from . import helpers
+    if _helpers_loaded:
+        return
+    _helpers_loaded = True
+
+    from jingo import helpers
+
     for app in settings.INSTALLED_APPS:
         try:
-            __import__('%s.helpers' % app)
+            app_path = import_module(app).__path__
+        except AttributeError:
+            continue
+
+        try:
+            imp.find_module('helpers', app_path)
         except ImportError:
-            pass
-    _helpers_loaded = True
+            continue
+
+        import_module('%s.helpers' % app)
 
 
 class Register(object):
