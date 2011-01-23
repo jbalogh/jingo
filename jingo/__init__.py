@@ -14,7 +14,7 @@ import jinja2
 VERSION = (0, 3)
 __version__ = '.'.join(map(str, VERSION))
 
-log = logging.getLogger('z.jingo')
+log = logging.getLogger('jingo')
 
 
 _helpers_loaded = False
