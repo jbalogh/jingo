@@ -56,8 +56,6 @@ def get_env():
         opts.update(config)
 
     e = Environment(**opts)
-    # TODO: use real translations
-    e.install_null_translations()
     return e
 
 
