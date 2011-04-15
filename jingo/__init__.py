@@ -82,14 +82,10 @@ def render_to_string(request, template, context=None):
     Render a template into a string.
     """
     def get_context():
-        # Only call the context processors once per request.
-        if not hasattr(request, '_jingo_context'):
-            request._jingo_context = {}
-            for processor in get_standard_processors():
-                request._jingo_context.update(processor(request))
-        ctx = {} if context is None else context.copy()
-        ctx.update(request._jingo_context)
-        return ctx
+        c = {} if context is None else context.copy()
+        for processor in get_standard_processors():
+            c.update(processor(request))
+        return c
 
     # If it's not a Template, it must be a path to be loaded.
     if not isinstance(template, jinja2.environment.Template):
