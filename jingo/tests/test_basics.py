@@ -9,12 +9,12 @@ import jinja2
 
 @patch('jingo.env')
 def test_render(mock_env):
-    mock_template = Mock()
+    mock_template = jinja2.environment.Template('foo')
     mock_env.get_template.return_value = mock_template
 
     response = jingo.render(Mock(), sentinel.template, status=32)
+    eq_('foo', response.content)
     mock_env.get_template.assert_called_with(sentinel.template)
-    assert mock_template.render.called
 
     eq_(response.status_code, 32)
 

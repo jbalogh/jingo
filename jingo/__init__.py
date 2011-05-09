@@ -5,7 +5,9 @@ import logging
 
 from django import http
 from django.conf import settings
-from django.template.context import get_standard_processors
+from django.template.context import RequestContext, get_standard_processors
+from django.template import response
+from django.utils.encoding import smart_str
 from django.utils.importlib import import_module
 from django.utils.translation import trans_real
 
@@ -56,7 +58,56 @@ def get_env():
         opts.update(config)
 
     e = Environment(**opts)
+    if hasattr(e, 'install_null_translations'):
+        e.install_null_translations()
     return e
+
+
+class TemplateResponse(response.TemplateResponse):
+    """
+    A TemplateResponse that uses jingo/Jinja2 to render itself and behaves
+    more like the responses we've come to know and love.
+    """
+
+    def resolve_template(self, template):
+        if not isinstance(template, jinja2.environment.Template):
+            return env.get_template(template)
+        return template
+
+    @property
+    def rendered_content(self):
+        template = self.resolve_template(self.template_name)
+        context_instance = self.resolve_context(self.context_data)
+        request = context_instance.get('request', None)
+        context = {}
+        for d in context_instance.dicts:
+            context.update(d)
+        return render_to_string(request, template, context)
+
+    def _get_content(self):
+        if not self._is_rendered:
+            self.render()
+        return super(TemplateResponse, self)._get_content()
+
+    def _set_content(self, value):
+        super(TemplateResponse, self)._set_content(value)
+        self._is_rendered = True
+
+    content = property(_get_content, _set_content)
+
+    def __str__(self):
+        return smart_str(self.content)
+
+    def __unicode__(self):
+        return self.content
+
+    def __len__(self):
+        return len(self.content)
+
+    def __iter__(self):
+        if not self._is_rendered:
+            self.render()
+        return super(TemplateResponse, self).__iter__()
 
 
 def render(request, template, context=None, **kwargs):
@@ -73,8 +124,7 @@ def render(request, template, context=None, **kwargs):
         return jingo.render(request, 'template.html',
                             {'some_var': 42}, status=209)
     """
-    rendered = render_to_string(request, template, context)
-    return http.HttpResponse(rendered, **kwargs)
+    return TemplateResponse(request, template, context, **kwargs)
 
 
 def render_to_string(request, template, context=None):

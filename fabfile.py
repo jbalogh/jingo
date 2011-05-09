@@ -30,7 +30,7 @@ def shell():
     local('django-admin.py shell')
 
 def test():
-    local('nosetests')
+    local('nosetests -s')
 
 def updoc():
     doc('dirhtml')
