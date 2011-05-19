@@ -66,3 +66,10 @@ def ifeq(a, b, text):
 def class_selected(a, b):
     """Return ``'class="selected"'`` if ``a == b``."""
     return ifeq(a, b, 'class="selected"')
+
+
+@register.filter
+def field_attrs(field_inst, **kwargs):
+    """Adds html attributes to django form fields"""
+    field_inst.field.widget.attrs.update(kwargs)
+    return field_inst

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Tests for the jingo's builtin helpers."""
 from datetime import datetime
+from collections import namedtuple
 
 from jinja2 import Markup
 from nose.tools import eq_
@@ -99,3 +100,23 @@ def test_csrf():
     eq_(s, "<div style='display:none'>"
            "<input type='hidden' name='csrfmiddlewaretoken' value='fffuuu' />"
            "</div>")
+
+
+def test_field_attrs():
+    class field(object):
+        def __init__(self):
+            self.field = namedtuple('_', 'widget')
+            self.field.widget = namedtuple('_', 'attrs')
+            self.field.widget.attrs = { 'class': 'foo' }
+
+        def __str__(self):
+            attrs = self.field.widget.attrs
+            attr_str = ' '.join('%s="%s"' % (k, v)
+                                for (k, v) in attrs.iteritems())
+            return Markup('<input %s />' % attr_str)
+        
+
+    f = field()
+    s = render('{{ field|field_attrs(class="bar",name="baz") }}',
+               { 'field': f })
+    eq_(s, '<input class="bar" name="baz" />')
