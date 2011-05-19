@@ -107,16 +107,15 @@ def test_field_attrs():
         def __init__(self):
             self.field = namedtuple('_', 'widget')
             self.field.widget = namedtuple('_', 'attrs')
-            self.field.widget.attrs = { 'class': 'foo' }
+            self.field.widget.attrs = {'class': 'foo'}
 
         def __str__(self):
             attrs = self.field.widget.attrs
             attr_str = ' '.join('%s="%s"' % (k, v)
                                 for (k, v) in attrs.iteritems())
             return Markup('<input %s />' % attr_str)
-        
 
     f = field()
     s = render('{{ field|field_attrs(class="bar",name="baz") }}',
-               { 'field': f })
+               {'field': f})
     eq_(s, '<input class="bar" name="baz" />')
