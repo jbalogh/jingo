@@ -56,6 +56,9 @@ def get_env():
         opts.update(config)
 
     e = Environment(**opts)
+    # Install null translations since gettext isn't always loaded up during
+    # testing.
+    e.install_null_translations()
     return e
 
 
