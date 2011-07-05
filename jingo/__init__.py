@@ -6,6 +6,7 @@ import logging
 from django import http
 from django.conf import settings
 from django.template.context import get_standard_processors
+from django.template.loader import BaseLoader
 from django.utils.importlib import import_module
 from django.utils.translation import trans_real
 
@@ -151,3 +152,23 @@ class Register(object):
 
 env = get_env()
 register = Register(env)
+
+
+class Template(object):
+    def __init__(self, template):
+        self.template = template
+
+    def render(self, context):
+        # flatten the Django Context into a single dictionary.
+        context_dict = {}
+        for d in context.dicts:
+            context_dict.update(d)
+        return self.template.render(context_dict)
+
+
+class Loader(BaseLoader):
+    is_usable = True
+
+    def load_template(self, template_name, template_dirs=None):
+        template = env.get_template(template_name)
+        return Template(template), template.filename
