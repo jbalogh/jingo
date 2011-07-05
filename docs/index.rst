@@ -1,8 +1,9 @@
 .. _jingo:
 .. module:: jingo
 
-A page about Jingo.
-===================
+Jingo
+=====
+
 
 Jingo is an adapter for using
 `Jinja2 <http://jinja.pocoo.org/2/documentation/>`_ templates within Django.
@@ -26,20 +27,14 @@ or ::
     def JINJA_CONFIG():
         return {'the_answer': 41 + 1}
 
+You'll want to use jingo's template loader::
 
-Rendering
----------
+    TEMPLATE_LOADERS = (
+        'jingo.Loader',
+    )
 
-At this point, Jingo only provides two shortcuts for rendering templates.
-
-.. autofunction:: jingo.render
-
-    The basic usage is to pass an ``HttpRequest`` and a template name.  All the
-    processors in ``settings.CONTEXT_PROCESSORS`` will be applied to the
-    context, just like when you use a ``RequestContext`` in Django.  Any extra
-    keyword arguments are passed directly to ``http.HttpResponse``.
-
-.. autofunction:: jingo.views.direct_to_template
+This will let you use ``django.shortcuts.render`` or
+``django.shortcuts.render_to_response``.
 
 
 Template Helpers
