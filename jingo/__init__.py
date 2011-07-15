@@ -6,7 +6,7 @@ import logging
 from django import http
 from django.conf import settings
 from django.template.context import get_standard_processors
-from django.template.loader import BaseLoader
+from django.template.loaders.app_directories import Loader as AppLoader
 from django.utils.importlib import import_module
 from django.utils.translation import trans_real
 
@@ -16,7 +16,6 @@ VERSION = (0, 3)
 __version__ = '.'.join(map(str, VERSION))
 
 log = logging.getLogger('jingo')
-
 
 _helpers_loaded = False
 
@@ -166,9 +165,15 @@ class Template(object):
         return self.template.render(context_dict)
 
 
-class Loader(BaseLoader):
+class Loader(AppLoader):
     is_usable = True
 
     def load_template(self, template_name, template_dirs=None):
+        if hasattr(template_name, 'rsplit'):
+            app = template_name.rsplit('/')[0]
+            if app in getattr(settings, 'DJANGO_TEMPLATE_APPS', []):
+                return super(Loader, self).load_template(
+                        template_name, template_dirs)
+
         template = env.get_template(template_name)
         return Template(template), template.filename
