@@ -5,6 +5,7 @@ import logging
 
 from django import http
 from django.conf import settings
+from django.template.base import TemplateDoesNotExist
 from django.template.context import get_standard_processors
 from django.template.loader import BaseLoader
 from django.utils.importlib import import_module
@@ -38,9 +39,13 @@ def get_env():
     """Configure and return a jinja2 Environment."""
     # Mimic Django's setup by loading templates from directories in
     # TEMPLATE_DIRS and packages in INSTALLED_APPS.
-    x = ((jinja2.FileSystemLoader, settings.TEMPLATE_DIRS),
-         (jinja2.PackageLoader, settings.INSTALLED_APPS))
-    loaders = [loader(p) for loader, places in x for p in places]
+    subpath = getattr(settings, 'JINJA_TEMPLATE_SUBPATH', '')
+    loaders = ( 
+        [ jinja2.FileSystemLoader('%s%s' % (p, subpath)) 
+            for p in settings.TEMPLATE_DIRS ] +
+        [ jinja2.PackageLoader(p, 'templates%s' % (subpath) )
+            for p in settings.INSTALLED_APPS ]
+    )
 
     opts = {'trim_blocks': True,
             'extensions': ['jinja2.ext.i18n'],
@@ -170,5 +175,9 @@ class Loader(BaseLoader):
     is_usable = True
 
     def load_template(self, template_name, template_dirs=None):
-        template = env.get_template(template_name)
-        return Template(template), template.filename
+        try:
+            template = env.get_template(template_name)
+            return Template(template), template.filename
+        except jinja2.TemplateNotFound, e:
+            raise TemplateDoesNotExist(template_name)
+

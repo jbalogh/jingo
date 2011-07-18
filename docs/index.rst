@@ -36,6 +36,31 @@ You'll want to use jingo's template loader::
 This will let you use ``django.shortcuts.render`` or
 ``django.shortcuts.render_to_response``.
 
+Using the ``JINJA_TEMPLATE_SUBPATH`` setting, you can mix both Django and Jinja
+templates in the same project::
+
+    JINJA_TEMPLATE_SUBPATH = "/jinja"
+
+    TEMPLATE_LOADERS = (
+        'jingo.Loader',
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )
+
+When configured this way, the ``jingo.Loader`` will look for templates under a
+``templates/jinja`` subdirectory both at the top-level and within each
+installed app. If a particular template is not found there, the search will
+fall back to Django template loaders.
+
+This can be handy for using Jinja templates in your own apps while still
+allowing the Django admin app and other third-party apps to function using
+built-in templates as expected.
+
+If ``JINJA_TEMPLATE_SUBPATH`` is left out of settings, the default value is
+blank. This results in ``jingo.loader`` looking for templates in just the
+``templates`` subdirectories. This can be useful for projects where Jinja is
+expected to be the only templating system in use.
+    
 
 Template Helpers
 ----------------
