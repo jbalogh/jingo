@@ -3,5 +3,5 @@ sphinx
 jinja2
 nose
 mock
--e svn+http://code.djangoproject.com/svn/django/trunk@12335#egg=Django
+Django==1.3
 fabric

@@ -1,9 +1,9 @@
 .. _jingo:
 .. module:: jingo
 
+=====
 Jingo
 =====
-
 
 Jingo is an adapter for using
 `Jinja2 <http://jinja.pocoo.org/2/documentation/>`_ templates within Django.
@@ -31,10 +31,20 @@ You'll want to use jingo's template loader::
 
     TEMPLATE_LOADERS = (
         'jingo.Loader',
+        'django.template.loaders.filesystem.Loader'
     )
 
 This will let you use ``django.shortcuts.render`` or
 ``django.shortcuts.render_to_response``.
+
+And finally you may have apps that do not use Jinja2, these must be excluded
+from the loader::
+
+    DJANGO_TEMPLATE_APPS = ('debug_toolbar',)
+
+If a template is in the *app folder*, `debug_toolbar`, Django will handle the
+templating, not Jinja.  If this fails, Django will then move on to the next
+loader.
 
 
 Template Helpers
@@ -93,3 +103,11 @@ The other method uses Jinja's ``trans`` tag::
 
 ``trans`` is nice when you have a lot of text or want to inject some variables
 directly.  Both methods are useful, pick the one that makes you happy.
+
+
+Testing
+-------
+
+Testing is handle via fabric::
+
+    fab test

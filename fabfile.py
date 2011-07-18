@@ -13,7 +13,7 @@ from fabric.contrib.project import rsync_project
 NAME = os.path.basename(os.path.dirname(__file__))
 ROOT = os.path.abspath(os.path.dirname(__file__))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = '%s-project.settings' % NAME
+os.environ['DJANGO_SETTINGS_MODULE'] = 'fake_settings'
 os.environ['PYTHONPATH'] = os.pathsep.join([ROOT,
                                             os.path.join(ROOT, 'examples')])
 
@@ -31,6 +31,9 @@ def shell():
 
 def test():
     local('nosetests')
+
+def cover():
+    local('nosetests --with-coverage')
 
 def updoc():
     doc('dirhtml')
