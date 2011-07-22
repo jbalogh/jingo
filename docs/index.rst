@@ -31,7 +31,8 @@ You'll want to use jingo's template loader::
 
     TEMPLATE_LOADERS = (
         'jingo.Loader',
-        'django.template.loaders.filesystem.Loader'
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
     )
 
 This will let you use ``django.shortcuts.render`` or
@@ -40,11 +41,12 @@ This will let you use ``django.shortcuts.render`` or
 And finally you may have apps that do not use Jinja2, these must be excluded
 from the loader::
 
-    DJANGO_TEMPLATE_APPS = ('debug_toolbar',)
+    JINGO_EXCLUDE_APPS = ('debug_toolbar',)
 
-If a template is in the *app folder*, `debug_toolbar`, Django will handle the
-templating, not Jinja.  If this fails, Django will then move on to the next
-loader.
+If a template is in the *app folder*, `debug_toolbar`, the Jinja loader will
+raise a TemplateDoesNotExist exception. This causes Django to move onto the 
+next loader in TEMPLATE_LOADERS to find a template - in this case,
+``django.template.loaders.filesystem.Loader``
 
 
 Template Helpers
