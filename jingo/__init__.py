@@ -59,7 +59,8 @@ def get_env():
     e = Environment(**opts)
     # Install null translations since gettext isn't always loaded up during
     # testing.
-    e.install_null_translations()
+    if 'jinja2.ext.i18n' in e.extensions:
+        e.install_null_translations()
     return e
 
 
