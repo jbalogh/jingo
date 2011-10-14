@@ -119,3 +119,10 @@ def test_field_attrs():
     s = render('{{ field|field_attrs(class="bar",name="baz") }}',
                {'field': f})
     eq_(s, '<input class="bar" name="baz" />')
+
+def test_url():
+    # urls defined in jingo/tests/urls.py
+    s = render('{{ url("url-args", 1, "foo") }}')
+    eq_(s, "/url/1/foo/")
+    s = render('{{ url("url-kwargs", word="bar", num=1) }}')
+    eq_(s, "/url/1/bar/")

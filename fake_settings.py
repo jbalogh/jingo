@@ -5,7 +5,7 @@ path = lambda *a: os.path.join(ROOT, *a)
 ROOT = os.path.dirname(os.path.abspath(__file__))
 INSTALLED_APPS = (
     'jingo.tests.jinja_app',
-    'jingo.tests.django_app'
+    'jingo.tests.django_app',
 )
 TEMPLATE_LOADERS = (
     'jingo.Loader',
@@ -14,3 +14,4 @@ TEMPLATE_LOADERS = (
 )
 TEMPLATE_DIRS = (path('jingo/tests/templates'),)
 JINGO_EXCLUDE_APPS = ('django_app',)
+ROOT_URLCONF = 'jingo.tests.urls'
