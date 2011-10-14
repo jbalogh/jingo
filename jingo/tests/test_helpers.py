@@ -101,6 +101,12 @@ def test_csrf():
            "<input type='hidden' name='csrfmiddlewaretoken' value='fffuuu' />"
            "</div>")
 
+def test_url():
+    # urls defined in jingo/tests/urls.py
+    s = render('{{ url("url-args", 1, "hey") }}')
+    eq_(s, "/url/1/hey/")
+    s = render('{{ url("url-kwargs", word="hey", num=1) }}')
+    eq_(s, "/url/1/hey/")
 
 def test_field_attrs():
     class field(object):

@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext as _
 from django.template.defaulttags import CsrfTokenNode
 from django.utils.encoding import smart_unicode
+from django.core.urlresolvers import reverse
 
 import jinja2
 
@@ -11,7 +12,17 @@ from jingo import register
 @jinja2.contextfunction
 def csrf(context):
     return jinja2.Markup(CsrfTokenNode().render(context))
-
+    
+@register.function
+def url(viewname, *args, **kwargs):
+    """
+    Wrapper around ``django.core.urlresolvers.reverse`` allows creation
+    absolute url. Equivalent to django template tag {% url %}.
+    Usage:
+        {{ url('viewname1', var1, var2) }}
+        {{ url('viewname2', param1=var1, param2=var2) }}
+    """
+    return jinja2.Markup(reverse(viewname, args=args, kwargs=kwargs))
 
 @register.filter
 def f(string, *args, **kwargs):

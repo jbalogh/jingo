@@ -14,3 +14,4 @@ TEMPLATE_LOADERS = (
 )
 TEMPLATE_DIRS = (path('jingo/tests/templates'),)
 JINGO_EXCLUDE_APPS = ('django_app',)
+ROOT_URLCONF = 'jingo.tests.urls'
