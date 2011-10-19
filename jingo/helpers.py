@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext as _
 from django.template.defaulttags import CsrfTokenNode
+from django.utils.importlib import import_module
 from django.utils.encoding import smart_unicode
 from django.core.urlresolvers import reverse
 
@@ -79,4 +80,12 @@ def field_attrs(field_inst, **kwargs):
 @register.function
 def url(viewname, *args, **kwargs):
     """Return URL using django's ``reverse()`` function."""
-    return reverse(viewname, args=args, kwargs=kwargs)
+    # import settings here to prevent circular dependency hell.
+    from django.conf import settings
+    r = getattr(settings, 'REVERSE_METHOD', None)
+    # Until https://code.djangoproject.com/ticket/17061 is resolved
+    if r:
+        r = getattr(import_module(r.rpartition('.')[0]), r.rpartition('.')[2])
+    else:
+        r = reverse
+    return r(viewname, args=args, kwargs=kwargs)

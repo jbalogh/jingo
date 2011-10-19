@@ -4,6 +4,7 @@ from datetime import datetime
 from collections import namedtuple
 
 from jinja2 import Markup
+from mock import patch
 from nose.tools import eq_
 
 import jingo
@@ -127,3 +128,15 @@ def test_url():
     eq_(s, "/url/1/foo/")
     s = render('{{ url("url-kwargs", word="bar", num=1) }}')
     eq_(s, "/url/1/bar/")
+
+
+reverse = lambda x, *y, **z: '/' + x + '!'
+
+@patch('django.conf.settings')
+def test_custom_url(s):
+    s.REVERSE_METHOD = 'jingo.tests.test_helpers.reverse'
+    # urls defined in jingo/tests/urls.py
+    s = render('{{ url("url-args", 1, "foo") }}')
+    eq_(s, "/url-args!")
+    s = render('{{ url("url-kwargs", word="bar", num=1) }}')
+    eq_(s, "/url-kwargs!")
