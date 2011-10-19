@@ -4,11 +4,12 @@ from datetime import datetime
 from collections import namedtuple
 
 from jinja2 import Markup
+from mock import patch
 from nose.tools import eq_
 
 import jingo
 from jingo import helpers
-
+from jingo import register
 
 def render(s, context={}):
     t = jingo.env.from_string(s)
@@ -127,3 +128,23 @@ def test_url():
     eq_(s, "/url/1/foo/")
     s = render('{{ url("url-kwargs", word="bar", num=1) }}')
     eq_(s, "/url/1/bar/")
+
+
+def url(x, *y, **z):
+    return '/' + x + '!'
+
+@patch('django.conf.settings')
+def test_custom_url(s):
+    # register our url method
+    register.function(url)
+    # re-register Jinja's
+    register.function(helpers.url, override=False)
+
+    # urls defined in jingo/tests/urls.py
+    s = render('{{ url("url-args", 1, "foo") }}')
+    eq_(s, "/url-args!")
+    s = render('{{ url("url-kwargs", word="bar", num=1) }}')
+    eq_(s, "/url-kwargs!")
+
+    # teardown
+    register.function(helpers.url, override=True)

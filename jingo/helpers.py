@@ -76,7 +76,7 @@ def field_attrs(field_inst, **kwargs):
     return field_inst
 
 
-@register.function
+@register.function(override=False)
 def url(viewname, *args, **kwargs):
     """Return URL using django's ``reverse()`` function."""
     return reverse(viewname, args=args, kwargs=kwargs)

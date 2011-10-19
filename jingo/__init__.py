@@ -131,14 +131,24 @@ class Register(object):
     def __init__(self, env):
         self.env = env
 
+    # TODO: this should be overridable too.
     def filter(self, f):
         """Adds the decorated function to Jinja's filter library."""
         self.env.filters[f.__name__] = f
         return f
 
-    def function(self, f):
+    def function(self, f=None, override=True):
         """Adds the decorated function to Jinja's global namespace."""
-        self.env.globals[f.__name__] = f
+        def decorator(f):
+            @functools.wraps(f)
+            def wrapper(*args, **kw):
+                return f(*args, **kw)
+            return self.function(wrapper, override)
+
+        if not f:
+            return decorator
+        if override or f.__name__ not in self.env.globals:
+            self.env.globals[f.__name__] = f
         return f
 
     def inclusion_tag(self, template):
