@@ -11,9 +11,10 @@ import jingo
 from jingo import helpers
 from jingo import register
 
+
 def render(s, context={}):
     t = jingo.env.from_string(s)
-    return t.render(**context)
+    return t.render(context)
 
 
 def test_f():
@@ -132,6 +133,7 @@ def test_url():
 
 def url(x, *y, **z):
     return '/' + x + '!'
+
 
 @patch('django.conf.settings')
 def test_custom_url(s):
