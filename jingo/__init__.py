@@ -9,11 +9,10 @@ from django.template.base import TemplateDoesNotExist
 from django.template.context import get_standard_processors
 from django.template.loader import BaseLoader
 from django.utils.importlib import import_module
-from django.utils.translation import trans_real
 
 import jinja2
 
-VERSION = (0, 3)
+VERSION = (0, 4)
 __version__ = '.'.join(map(str, VERSION))
 
 log = logging.getLogger('jingo')
@@ -67,18 +66,11 @@ def get_env():
 
 def render(request, template, context=None, **kwargs):
     """
-    Shortcut like Django's ``render_to_response``, but better.
-
-    Minimal usage, with only a request object and a template name::
-
-        return jingo.render(request, 'template.html')
-
-    With template context and keywords passed to
-    :class:`django.http.HttpResponse`::
-
-        return jingo.render(request, 'template.html',
-                            {'some_var': 42}, status=209)
+    .. deprecated:: 0.4
+        use ``django.shortcuts.render()``
     """
+    log.warning('jingo.render() has been deprecated.  '
+                'Use django.shortcuts.render().')
     rendered = render_to_string(request, template, context)
     return http.HttpResponse(rendered, **kwargs)
 
