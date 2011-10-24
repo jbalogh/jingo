@@ -2,6 +2,7 @@
 import functools
 import imp
 import logging
+import warnings
 
 from django import http
 from django.conf import settings
@@ -69,8 +70,8 @@ def render(request, template, context=None, **kwargs):
     .. deprecated:: 0.4
         use ``django.shortcuts.render()``
     """
-    log.warning('jingo.render() has been deprecated.  '
-                'Use django.shortcuts.render().')
+    warnings.warn('jingo.render() has been deprecated.  Use '
+                  'django.shortcuts.render().', DeprecationWarning)
     rendered = render_to_string(request, template, context)
     return http.HttpResponse(rendered, **kwargs)
 
@@ -172,10 +173,13 @@ class Template(jinja2.Template):
         else:
             context_dict = context
 
+            # Django Debug Toolbar needs a RequestContext-like object in order
+            # to inspect context.
             class FakeRequestContext:
                 dicts = [context]
             context = FakeRequestContext()
 
+        # Used by debug_toolbar.
         if settings.TEMPLATE_DEBUG:
             from django.test import signals
             self.origin = Origin(self.filename)
