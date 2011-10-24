@@ -5,15 +5,14 @@ import logging
 
 from django import http
 from django.conf import settings
-from django.template.base import TemplateDoesNotExist
+from django.template.base import Origin, TemplateDoesNotExist
 from django.template.context import get_standard_processors
 from django.template.loader import BaseLoader
 from django.utils.importlib import import_module
-from django.utils.translation import trans_real
 
 import jinja2
 
-VERSION = (0, 3)
+VERSION = (0, 4)
 __version__ = '.'.join(map(str, VERSION))
 
 log = logging.getLogger('jingo')
@@ -67,18 +66,11 @@ def get_env():
 
 def render(request, template, context=None, **kwargs):
     """
-    Shortcut like Django's ``render_to_response``, but better.
-
-    Minimal usage, with only a request object and a template name::
-
-        return jingo.render(request, 'template.html')
-
-    With template context and keywords passed to
-    :class:`django.http.HttpResponse`::
-
-        return jingo.render(request, 'template.html',
-                            {'some_var': 42}, status=209)
+    .. deprecated:: 0.4
+        use ``django.shortcuts.render()``
     """
+    log.warning('jingo.render() has been deprecated.  '
+                'Use django.shortcuts.render().')
     rendered = render_to_string(request, template, context)
     return http.HttpResponse(rendered, **kwargs)
 
@@ -97,7 +89,7 @@ def render_to_string(request, template, context=None):
     if not isinstance(template, jinja2.environment.Template):
         template = env.get_template(template)
 
-    return template.render(**get_context())
+    return template.render(get_context())
 
 
 def load_helpers():
@@ -166,26 +158,44 @@ env = get_env()
 register = Register(env)
 
 
-class Template(object):
-    def __init__(self, template):
-        self.template = template
+class Template(jinja2.Template):
 
-    def render(self, context):
+    def render(self, context={}):
+        """Render's a template, context can be a Django Context or a
+        dictionary.
+        """
         # flatten the Django Context into a single dictionary.
         context_dict = {}
-        for d in context.dicts:
-            context_dict.update(d)
-        return self.template.render(context_dict)
+        if hasattr(context, 'dicts'):
+            for d in context.dicts:
+                context_dict.update(d)
+        else:
+            context_dict = context
+
+            class FakeRequestContext:
+                dicts = [context]
+            context = FakeRequestContext()
+
+        if settings.TEMPLATE_DEBUG:
+            from django.test import signals
+            self.origin = Origin(self.filename)
+            signals.template_rendered.send(sender=self, template=self,
+                                           context=context)
+
+        return super(Template, self).render(context_dict)
 
 
 class Loader(BaseLoader):
     is_usable = True
+    env.template_class = Template
 
     def load_template(self, template_name, template_dirs=None):
         if hasattr(template_name, 'rsplit'):
             app = template_name.rsplit('/')[0]
             if app in getattr(settings, 'JINGO_EXCLUDE_APPS', []):
                 raise TemplateDoesNotExist(template_name)
-
-        template = env.get_template(template_name)
-        return Template(template), template.filename
+        try:
+            template = env.get_template(template_name)
+            return template, template.filename
+        except jinja2.TemplateNotFound:
+            raise TemplateDoesNotExist(template_name)
