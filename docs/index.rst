@@ -5,29 +5,47 @@
 Jingo
 =====
 
-Jingo is an adapter for using
-`Jinja2 <http://jinja.pocoo.org/2/documentation/>`_ templates within Django.
-Why are we already replacing the templates?  AMO's current PHP templates let you
-go hog-wild with logic in the templates, while Django is extremely restrictive.
-Jinja loosens those restrictions somewhat, providing a more powerful engine with
-the beauty of Django's templates.  The tipping point for me was the verbosity of
-doing L10n in Django templates.
+Jingo is an adapter for using Jinja2_ templates within Django.
 
+.. note:: Coffin or Jingo?
+
+    Jingo differs from Coffin_ in two major ways:
+
+    * Jingo serves purely as a minimalistic bridge between Django and Jinja2_.
+      Coffin_ attempts to reduce the differences between Jinja2_ templates
+      and Django's native templates.
+
+    * Jingo has a far supperior name, as it is a portmanteau of 'Jinja' and
+      Django.
+
+    .. _Coffin: https://github.com/coffin/coffin/
+    .. _Jinja2: http://jinja.pocoo.org/2/
+
+
+.. _usage:
+
+Usage
+-----
+
+When configured properly (see Settings_ below) you can render Jinja2_ templates in
+your view the same way you'd render Django templates::
+
+    from django shortcuts import render
+
+
+    def MyView(request):
+        # TODO: Do something.
+        context = dict(user_ids=[1, 2, 3, 4])
+        render('users/search.html', context)
+
+
+.. _settings:
 
 Settings
 --------
 
-If you want to configure the Jinja environment, use ``JINJA_CONFIG`` in
-``settings.py``.  It can be a dict or a function that returns a dict. ::
-
-    JINJA_CONFIG = {'autoescape': False}
-
-or ::
-
-    def JINJA_CONFIG():
-        return {'the_answer': 41 + 1}
-
-You'll want to use jingo's template loader::
+You'll want to use Django to use jingo's template loader.
+In ``settings.py``::
 
     TEMPLATE_LOADERS = (
         'jingo.Loader',
@@ -43,10 +61,21 @@ from the loader::
 
     JINGO_EXCLUDE_APPS = ('debug_toolbar',)
 
-If a template is in the *app folder*, `debug_toolbar`, the Jinja loader will
-raise a TemplateDoesNotExist exception. This causes Django to move onto the 
-next loader in TEMPLATE_LOADERS to find a template - in this case,
-``django.template.loaders.filesystem.Loader``
+If a template is in the *app folder*, ``debug_toolbar``, the Jinja loader will
+raise a ``TemplateDoesNotExist`` exception.
+This causes Django to move onto the next loader in ``TEMPLATE_LOADERS``
+to find a template - in this case,
+``django.template.loaders.filesystem.Loader``.
+
+If you want to configure the Jinja environment, use ``JINJA_CONFIG`` in
+``settings.py``.  It can be a dict or a function that returns a dict. ::
+
+    JINJA_CONFIG = {'autoescape': False}
+
+or ::
+
+    def JINJA_CONFIG():
+        return {'the_answer': 41 + 1}
 
 
 Template Helpers

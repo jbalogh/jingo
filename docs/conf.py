@@ -2,6 +2,7 @@ import os
 import sys
 
 sys.path.append(os.path.abspath('..'))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'fake_settings'
 
 import jingo
 
@@ -15,7 +16,7 @@ extensions = ['sphinx.ext.autodoc']
 
 # General information about the project.
 project = u'Jingo'
-copyright = u'2010, The Zamboni Collective'
+copyright = u'2010-2011, The Zamboni Collective'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
