@@ -1,17 +1,18 @@
 from django.utils import translation
-from mock import Mock, patch, sentinel
+from django.views.generic.simple import direct_to_template
 
+from mock import patch, sentinel
 from nose.tools import eq_
 
-import jingo.views
-from jingo import get_env
+from jingo import get_env, render_to_string
 
 
 @patch('jingo.render')
 def test_direct_to_template(mock_render):
-    request = sentinel.request
-    jingo.views.direct_to_template(request, 'base.html', x=1)
-    mock_render.assert_called_with(request, 'base.html', {'x': 1})
+    response = direct_to_template(sentinel.request,
+                                  'jinja_app/test_nonoverride.html',
+                                  {'x': 1})
+    eq_('HELLO', response.content)
 
 
 def test_template_substitution_crash():
@@ -22,5 +23,5 @@ def test_template_substitution_crash():
     # The localized string has the wrong variable name in it
     s = '{% trans string="heart" %}Broken {{ string }}{% endtrans %}'
     template = env.from_string(s)
-    rendered = jingo.render_to_string(Mock(), template, {})
+    rendered = render_to_string(sentinel.request, template, {})
     eq_(rendered, 'Broken heart')
