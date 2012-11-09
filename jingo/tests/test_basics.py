@@ -4,7 +4,6 @@ from nose.tools import eq_
 from mock import Mock, patch, sentinel
 
 import jingo
-import jinja2
 
 
 @patch('jingo.env')

@@ -153,13 +153,15 @@ def test_custom_url(s):
 
 
 def test_filter_override():
-    def f(s): return s.upper()
+    def f(s):
+        return s.upper()
     f.__name__ = 'a'
     register.filter(f)
     s = render('{{ s|a }}', {'s': 'Str'})
     eq_(s, 'STR')
 
-    def g(s): return s.lower()
+    def g(s):
+        return s.lower()
     g.__name__ = 'a'
     register.filter(override=False)(g)
     s = render('{{ s|a }}', {'s': 'Str'})
