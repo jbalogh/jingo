@@ -150,3 +150,21 @@ def test_custom_url(s):
 
     # teardown
     register.function(helpers.url, override=True)
+
+
+def test_filter_override():
+    def f(s): return s.upper()
+    f.__name__ = 'a'
+    register.filter(f)
+    s = render('{{ s|a }}', {'s': 'Str'})
+    eq_(s, 'STR')
+
+    def g(s): return s.lower()
+    g.__name__ = 'a'
+    register.filter(override=False)(g)
+    s = render('{{ s|a }}', {'s': 'Str'})
+    eq_(s, 'STR')
+
+    register.filter(g)
+    s = render('{{ s|a }}', {'s': 'Str'})
+    eq_(s, 'str')
