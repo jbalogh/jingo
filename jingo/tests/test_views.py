@@ -1,9 +1,7 @@
 from django.utils import translation
 from mock import Mock, patch, sentinel
 
-import jinja2
 from nose.tools import eq_
-from test_helpers import render
 
 import jingo.views
 from jingo import get_env
