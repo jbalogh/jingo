@@ -152,6 +152,15 @@ The other method uses Jinja's ``trans`` tag::
 directly.  Both methods are useful, pick the one that makes you happy.
 
 
+Forms
+-----
+
+Django marks its form HTML "safe" according to its own rules, which Jinja2 does
+not recognize.
+
+.. automodule:: jingo.monkey
+
+
 Testing
 -------
 
