@@ -16,6 +16,12 @@ import jinja2
 VERSION = (0, 4)
 __version__ = '.'.join(map(str, VERSION))
 
+EXCLUDE_APPS = (
+    'admin',
+    'admindocs',
+    'registration',
+)
+
 log = logging.getLogger('jingo')
 
 _helpers_loaded = False
@@ -204,7 +210,7 @@ class Loader(BaseLoader):
     def load_template(self, template_name, template_dirs=None):
         if hasattr(template_name, 'rsplit'):
             app = template_name.rsplit('/')[0]
-            if app in getattr(settings, 'JINGO_EXCLUDE_APPS', []):
+            if app in getattr(settings, 'JINGO_EXCLUDE_APPS', EXCLUDE_APPS):
                 raise TemplateDoesNotExist(template_name)
         try:
             template = env.get_template(template_name)

@@ -65,11 +65,23 @@ from the loader::
 
     JINGO_EXCLUDE_APPS = ('debug_toolbar',)
 
-If a template is in the *app folder*, ``debug_toolbar``, the Jinja loader will
-raise a ``TemplateDoesNotExist`` exception.
-This causes Django to move onto the next loader in ``TEMPLATE_LOADERS``
-to find a template - in this case,
+If a template path begins with ``debug_toolbar``, the Jinja loader will raise a
+``TemplateDoesNotExist`` exception. This causes Django to move onto the next
+loader in ``TEMPLATE_LOADERS`` to find a template - in this case,
 ``django.template.loaders.filesystem.Loader``.
+
+.. note::
+   Technically, we're looking at the template path, not the app. Often these are
+   the same, but in some cases, like 'registration' in the default setting--which
+   is an admin template--they are not.
+
+The default is in ``jingo.EXCLUDE_APPS``::
+
+    EXCLUDE_APPS = (
+        'admin',
+        'admindocs',
+        'registration'
+    )
 
 If you want to configure the Jinja environment, use ``JINJA_CONFIG`` in
 ``settings.py``.  It can be a dict or a function that returns a dict. ::
