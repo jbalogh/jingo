@@ -7,8 +7,7 @@ from nose.tools import eq_
 from jingo import get_env, render_to_string
 
 
-@patch('jingo.render')
-def test_direct_to_template(mock_render):
+def test_direct_to_template():
     response = direct_to_template(sentinel.request,
                                   'jinja_app/test_nonoverride.html',
                                   {'x': 1})

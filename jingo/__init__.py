@@ -71,17 +71,6 @@ def get_env():
     return e
 
 
-def render(request, template, context=None, **kwargs):
-    """
-    .. deprecated:: 0.4
-        use ``django.shortcuts.render()``
-    """
-    warnings.warn('jingo.render() has been deprecated.  Use '
-                  'django.shortcuts.render().', DeprecationWarning)
-    rendered = render_to_string(request, template, context)
-    return http.HttpResponse(rendered, **kwargs)
-
-
 def render_to_string(request, template, context=None):
     """
     Render a template into a string.

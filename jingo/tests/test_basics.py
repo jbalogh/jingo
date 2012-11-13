@@ -1,3 +1,4 @@
+from django.shortcuts import render
 import jinja2
 
 from nose.tools import eq_
@@ -11,7 +12,7 @@ def test_render(mock_env):
     mock_template = Mock()
     mock_env.get_template.return_value = mock_template
 
-    response = jingo.render(Mock(), sentinel.template, status=32)
+    response = render(Mock(), sentinel.template, status=32)
     mock_env.get_template.assert_called_with(sentinel.template)
     assert mock_template.render.called
 
@@ -24,12 +25,6 @@ def test_render_to_string(mock_env):
     rendered = jingo.render_to_string(Mock(), template, {'answer': 42})
 
     eq_(rendered, 'The answer is 42')
-
-
-def test_render_with_Template():
-    template = jinja2.Environment().from_string('xxx')
-    response = jingo.render(Mock(), template)
-    eq_(response.content, 'xxx')
 
 
 @patch('jingo.env.get_template')
