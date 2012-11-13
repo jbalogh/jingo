@@ -1,0 +1,12 @@
+CHANGES
+=======
+
+
+v0.5
+----
+
+* Removed deprecated jingo.render() method.
+* Removed deprecated jingo.views module.
+* Include safe_django_forms monkeypatch as jingo.monkey.
+* Add EXCLUDE_APPS default and clarify documentation.
+* Add override kwarg to register.filter.
