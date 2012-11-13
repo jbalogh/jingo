@@ -1,2 +1,4 @@
 docs/_build
 *.py[co]
+dist
+*.egg-info
