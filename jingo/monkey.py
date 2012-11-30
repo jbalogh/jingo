@@ -44,7 +44,7 @@ def __html__(self):
 
     Allows interoperability with other template engines.
     """
-    return self
+    return unicode(self)
 
 
 # Django uses StrAndUnicode for classes like Form, BoundField, Widget which
@@ -83,3 +83,6 @@ def patch():
             idx = bases.index(django.utils.encoding.StrAndUnicode)
             bases[idx] = SafeStrAndUnicode
             cls.__bases__ = tuple(bases)
+    for cls in classes:
+        if not hasattr(cls, '__html__'):
+            cls.__html__ = __html__

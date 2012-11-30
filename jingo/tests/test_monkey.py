@@ -22,3 +22,6 @@ def test_monkey_patch():
 
     jingo.monkey.patch()
     eq_(html, render(t, context))
+
+    s = unicode(form['email'])
+    eq_(s, render('{{ form.email }}', {'form': form}))
