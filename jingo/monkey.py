@@ -83,3 +83,6 @@ def patch():
             idx = bases.index(django.utils.encoding.StrAndUnicode)
             bases[idx] = SafeStrAndUnicode
             cls.__bases__ = tuple(bases)
+    for cls in classes:
+        if not hasattr(cls, '__html__'):
+            cls.__html__ = __html__
