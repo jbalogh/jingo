@@ -99,9 +99,8 @@ def test_class_selected():
 
 def test_csrf():
     s = render('{{ csrf() }}', {'csrf_token': 'fffuuu'})
-    eq_(s, "<div style='display:none'>"
-           "<input type='hidden' name='csrfmiddlewaretoken' value='fffuuu' />"
-           "</div>")
+    csrf = "<input type='hidden' name='csrfmiddlewaretoken' value='fffuuu' />"
+    assert csrf in s
 
 
 def test_field_attrs():
