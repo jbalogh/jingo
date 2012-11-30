@@ -13,7 +13,7 @@ from django.utils.importlib import import_module
 
 import jinja2
 
-VERSION = (0, 5)
+VERSION = (0, 6)
 __version__ = '.'.join(map(str, VERSION))
 
 EXCLUDE_APPS = (
