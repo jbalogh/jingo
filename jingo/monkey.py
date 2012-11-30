@@ -44,7 +44,7 @@ def __html__(self):
 
     Allows interoperability with other template engines.
     """
-    return self
+    return unicode(self)
 
 
 # Django uses StrAndUnicode for classes like Form, BoundField, Widget which
