@@ -2,10 +2,8 @@
 import functools
 import imp
 import logging
-import warnings
 import re
 
-from django import http
 from django.conf import settings
 from django.template.base import Origin, TemplateDoesNotExist
 from django.template.context import get_standard_processors
@@ -98,7 +96,7 @@ def load_helpers():
         return
     _helpers_loaded = True
 
-    from jingo import helpers
+    from jingo import helpers  # noqa
 
     for app in settings.INSTALLED_APPS:
         try:
