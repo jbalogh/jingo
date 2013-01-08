@@ -3,6 +3,7 @@ import functools
 import imp
 import logging
 import warnings
+import re
 
 from django import http
 from django.conf import settings
@@ -196,7 +197,19 @@ class Loader(BaseLoader):
     is_usable = True
     env.template_class = Template
 
+    def __init__(self):
+        super(Loader, self).__init__()
+        include_pattern = getattr(settings, 'JINGO_INCLUDE_PATTERN', None)
+        if include_pattern:
+            self.include_re = re.compile(include_pattern)
+        else:
+            self.include_re = None
+
     def load_template(self, template_name, template_dirs=None):
+        if self.include_re:
+            if not self.include_re.search(template_name):
+                raise TemplateDoesNotExist(template_name)
+
         if hasattr(template_name, 'rsplit'):
             app = template_name.rsplit('/')[0]
             if app in getattr(settings, 'JINGO_EXCLUDE_APPS', EXCLUDE_APPS):

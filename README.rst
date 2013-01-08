@@ -60,6 +60,13 @@ In ``settings.py``::
 This will let you use ``django.shortcuts.render`` or
 ``django.shortcuts.render_to_response``.
 
+You can optionally specify which filename patterns to consider Jinja2 templates::
+
+    JINGO_INCLUDE_PATTERN = r'\.jinja2'  # use any regular expression here
+
+This will consider every template file that contains the substring `.jinja2` to
+be a Jinja2 file (unless it's in a module explicitly excluded, see below).
+
 And finally you may have apps that do not use Jinja2, these must be excluded
 from the loader::
 
