@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+v0.6.1
+------
+
+* Added JINGO_INCLUDE_PATTERN.
+
 v0.6
 ----
 
