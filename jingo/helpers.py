@@ -11,6 +11,7 @@ from jingo import register
 @register.function
 @jinja2.contextfunction
 def csrf(context):
+    """Equivalent of Django's ``{% crsf_token %}``."""
     return jinja2.Markup(CsrfTokenNode().render(context))
 
 
