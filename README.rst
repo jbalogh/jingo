@@ -36,7 +36,7 @@ your view the same way you'd render Django templates::
     def MyView(request):
         # TODO: Do something.
         context = dict(user_ids=[1, 2, 3, 4])
-        render('users/search.html', context)
+        render(request, 'users/search.html', context)
 
 ..note::
 
