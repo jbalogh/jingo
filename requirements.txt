@@ -1,5 +1,5 @@
 # These are the reqs to build docs and run tests.
--e git+git://github.com/django/django.git@1.5b1#egg=django
+Django==1.5.1
 sphinx
 jinja2
 nose
