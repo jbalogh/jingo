@@ -38,7 +38,7 @@ your view the same way you'd render Django templates::
         context = dict(user_ids=[1, 2, 3, 4])
         render(request, 'users/search.html', context)
 
-..note::
+.. note::
 
     Not only does ``django.shorcuts.render`` work, but so does any method that
     Django provides to render templates.
