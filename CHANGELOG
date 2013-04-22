@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+v0.6.2
+------
+
+* Add context_processors application to EXCLUDE_APPS.
+
 v0.6.1
 ------
 

@@ -87,8 +87,12 @@ The default is in ``jingo.EXCLUDE_APPS``::
     EXCLUDE_APPS = (
         'admin',
         'admindocs',
-        'registration'
+        'registration',
+        'context_processors',
     )
+
+.. versionchanged:: 0.6.2
+   Added ``context_processors`` application.
 
 If you want to configure the Jinja environment, use ``JINJA_CONFIG`` in
 ``settings.py``.  It can be a dict or a function that returns a dict. ::

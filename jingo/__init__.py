@@ -19,6 +19,7 @@ EXCLUDE_APPS = (
     'admin',
     'admindocs',
     'registration',
+    'context_processors',
 )
 
 log = logging.getLogger('jingo')
