@@ -5,6 +5,10 @@
 Jingo
 =====
 
+.. note:: This document may be out of date.  The up-to-date documentation can
+   be found on `Read the Docs <https://jingo.readthedocs.org/en/latest/>`_.
+
+
 Jingo is an adapter for using Jinja2_ templates within Django.
 
 .. note:: Coffin or Jingo?
@@ -15,7 +19,7 @@ Jingo is an adapter for using Jinja2_ templates within Django.
       Coffin_ attempts to reduce the differences between Jinja2_ templates
       and Django's native templates.
 
-    * Jingo has a far superior name, as it is a portmanteau of 'Jinja' and
+    * Jingo has a far supperior name, as it is a portmanteau of 'Jinja' and
       Django.
 
     .. _Coffin: https://github.com/coffin/coffin/
@@ -33,12 +37,11 @@ your view the same way you'd render Django templates::
     from django.shortcuts import render
 
 
-    def MyView(request):
-        # TODO: Do something.
-        context = dict(user_ids=[1, 2, 3, 4])
-        render(request, 'users/search.html', context)
+    def my_view(request):
+        context = dict(user_ids=(1, 2, 3, 4))
+        return render(request, 'users/search.html', context)
 
-..note::
+.. note::
 
     Not only does ``django.shorcuts.render`` work, but so does any method that
     Django provides to render templates.
@@ -87,8 +90,12 @@ The default is in ``jingo.EXCLUDE_APPS``::
     EXCLUDE_APPS = (
         'admin',
         'admindocs',
-        'registration'
+        'registration',
+        'context_processors',
     )
+
+.. versionchanged:: 0.6.2
+   Added ``context_processors`` application.
 
 If you want to configure the Jinja environment, use ``JINJA_CONFIG`` in
 ``settings.py``.  It can be a dict or a function that returns a dict. ::
@@ -151,9 +158,9 @@ could create a link if I knew how to do that.
 
 The other method uses Jinja's ``trans`` tag::
 
-        {% trans user=review.user|user_link, date=review.created|datetime %}
-          by {{ user }} on {{ date }}
-        {% endtrans %}
+    {% trans user=review.user|user_link, date=review.created|datetime %}
+        by {{ user }} on {{ date }}
+    {% endtrans %}
 
 ``trans`` is nice when you have a lot of text or want to inject some variables
 directly.  Both methods are useful, pick the one that makes you happy.
@@ -165,7 +172,19 @@ Forms
 Django marks its form HTML "safe" according to its own rules, which Jinja2 does
 not recognize.
 
-.. automodule:: jingo.monkey
+This monkeypatches Django to support the ``__html__`` protocol used in Jinja2
+templates. ``Form``, ``BoundField``, ``ErrorList``, and other form objects that
+render HTML through their ``__unicode__`` method are extended with ``__html__``
+so they can be rendered in Jinja2 templates without adding ``|safe``.
+
+Call the ``patch()`` function to execute the patch. It must be called
+before ``django.forms`` is imported for the conditional_escape patch to work
+properly. The root URLconf is the recommended location for calling ``patch()``.
+
+Usage::
+
+    import jingo.monkey
+    jingo.monkey.patch()
 
 
 Testing
@@ -174,8 +193,3 @@ Testing
 Testing is handle via fabric::
 
     fab test
-
-
-.. seealso:
-    The full documentation is available at http://jinja.rtfd.org/ or in the
-    docs/ folder.
