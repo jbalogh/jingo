@@ -33,10 +33,9 @@ your view the same way you'd render Django templates::
     from django.shortcuts import render
 
 
-    def MyView(request):
-        # TODO: Do something.
-        context = dict(user_ids=[1, 2, 3, 4])
-        render(request, 'users/search.html', context)
+    def my_view(request):
+        context = dict(user_ids=(1, 2, 3, 4))
+        return render(request, 'users/search.html', context)
 
 .. note::
 
