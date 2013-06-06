@@ -4,6 +4,7 @@ from django.utils.encoding import smart_unicode
 from django.core.urlresolvers import reverse
 
 import jinja2
+import platform
 
 from jingo import register
 
@@ -54,7 +55,10 @@ def nl2br(string):
 def datetime(t, fmt=None):
     """Call ``datetime.strftime`` with the given format string."""
     if fmt is None:
-        fmt = _('%B %e, %Y')
+        if platform.system() == "Windows":
+            fmt = _('%B %d, %Y')
+        else:
+            fmt = _('%B %e, %Y')
     return smart_unicode(t.strftime(fmt.encode('utf-8'))) if t else u''
 
 
