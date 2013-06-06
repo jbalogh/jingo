@@ -116,6 +116,9 @@ def test_field_attrs():
                                 for (k, v) in attrs.iteritems())
             return Markup('<input %s />' % attr_str)
 
+        def __html__(self):
+            return self.__str__()
+
     f = field()
     s = render('{{ field|field_attrs(class="bar",name="baz") }}',
                {'field': f})
