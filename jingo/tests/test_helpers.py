@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
 """Tests for the jingo's builtin helpers."""
+
+from __future__ import unicode_literals
+
 from datetime import datetime
 from collections import namedtuple
 
+from django.utils import six
 from jinja2 import Markup
-from mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 from nose.tools import eq_
 
-import jingo
 from jingo import helpers
 from jingo import register
 
-
-def render(s, context={}):
-    t = jingo.env.from_string(s)
-    return t.render(context)
+from .utils import htmleq_, render
 
 
 def test_f():
@@ -35,9 +38,9 @@ def test_fe_positional():
 
 
 def test_fe_unicode():
-    context = {'var': u'Français'}
+    context = {'var': 'Français'}
     template = '{{ "Speak {0}"|fe(var) }}'
-    eq_(u'Speak Français', render(template, context))
+    eq_('Speak Français', render(template, context))
 
 
 def test_fe_markup():
@@ -113,7 +116,7 @@ def test_field_attrs():
         def __str__(self):
             attrs = self.field.widget.attrs
             attr_str = ' '.join('%s="%s"' % (k, v)
-                                for (k, v) in attrs.iteritems())
+                                for (k, v) in six.iteritems(attrs))
             return Markup('<input %s />' % attr_str)
 
         def __html__(self):
@@ -122,7 +125,7 @@ def test_field_attrs():
     f = field()
     s = render('{{ field|field_attrs(class="bar",name="baz") }}',
                {'field': f})
-    eq_(s, '<input class="bar" name="baz" />')
+    htmleq_(s, '<input class="bar" name="baz" />')
 
 
 def test_url():
@@ -157,14 +160,15 @@ def test_custom_url(s):
 def test_filter_override():
     def f(s):
         return s.upper()
-    f.__name__ = 'a'
+    # See issue 7688: http://bugs.python.org/issue7688
+    f.__name__ = 'a' if six.PY3 else b'a'
     register.filter(f)
     s = render('{{ s|a }}', {'s': 'Str'})
     eq_(s, 'STR')
 
     def g(s):
         return s.lower()
-    g.__name__ = 'a'
+    g.__name__ = 'a' if six.PY3 else b'a'
     register.filter(override=False)(g)
     s = render('{{ s|a }}', {'s': 'Str'})
     eq_(s, 'STR')

@@ -190,6 +190,11 @@ Usage::
 Testing
 -------
 
-Testing is handle via fabric::
+To run the test suite, you need to define ``DJANGO_SETTINGS_MODULE`` first::
 
-    fab test
+    $ export DJANGO_SETTINGS_MODULE="fake_settings"
+    $ nosetests
+
+or simply run::
+
+    $ python run_tests.py

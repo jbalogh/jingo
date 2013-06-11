@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+v0.x.y
+------
+
+* Added Python 3 support.
+
 v0.6.2
 ------
 
