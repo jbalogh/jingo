@@ -2,8 +2,10 @@
 import functools
 import imp
 import logging
+import warnings
 import re
 
+from django import http
 from django.conf import settings
 from django.template.base import Origin, TemplateDoesNotExist
 from django.template.context import get_standard_processors
@@ -19,7 +21,6 @@ EXCLUDE_APPS = (
     'admin',
     'admindocs',
     'registration',
-    'context_processors',
 )
 
 log = logging.getLogger('jingo')
@@ -97,7 +98,7 @@ def load_helpers():
         return
     _helpers_loaded = True
 
-    from jingo import helpers  # noqa
+    from jingo import helpers
 
     for app in settings.INSTALLED_APPS:
         try:
@@ -204,17 +205,38 @@ class Loader(BaseLoader):
         else:
             self.include_re = None
 
-    def load_template(self, template_name, template_dirs=None):
+    def _valid_template(self, template_name):
         if self.include_re:
             if not self.include_re.search(template_name):
-                raise TemplateDoesNotExist(template_name)
+                return False
 
         if hasattr(template_name, 'rsplit'):
             app = template_name.rsplit('/')[0]
             if app in getattr(settings, 'JINGO_EXCLUDE_APPS', EXCLUDE_APPS):
-                raise TemplateDoesNotExist(template_name)
+                return False
+
+        return True
+
+
+    def load_template(self, template_name, template_dirs=None):
+        if not self._valid_template(template_name):
+            raise TemplateDoesNotExist(template_name)
+
         try:
             template = env.get_template(template_name)
             return template, template.filename
         except jinja2.TemplateNotFound:
             raise TemplateDoesNotExist(template_name)
+
+    def load_template_source(self, template_name, template_dirs=None):
+        if not self._valid_template(template_name):
+            raise TemplateDoesNotExist(template_name)
+
+        try:
+            template = env.get_template(template_name)
+        except jinja2.TemplateNotFound:
+            raise TemplateDoesNotExist(template_name)
+
+        with open(template.filename, 'rb') as fp:
+            return (fp.read().decode(settings.FILE_CHARSET), template.filename)
+
