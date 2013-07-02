@@ -66,7 +66,7 @@ def get_env():
     # Install null translations since gettext isn't always loaded up during
     # testing.
     if ('jinja2.ext.i18n' in e.extensions or
-        'jinja2.ext.InternationalizationExtension' in e.extensions):
+            'jinja2.ext.InternationalizationExtension' in e.extensions):
         e.install_null_translations()
     return e
 
@@ -204,17 +204,36 @@ class Loader(BaseLoader):
         else:
             self.include_re = None
 
-    def load_template(self, template_name, template_dirs=None):
+    def _valid_template(self, template_name):
         if self.include_re:
             if not self.include_re.search(template_name):
-                raise TemplateDoesNotExist(template_name)
+                return False
 
         if hasattr(template_name, 'split'):
             app = template_name.split('/')[0]
             if app in getattr(settings, 'JINGO_EXCLUDE_APPS', EXCLUDE_APPS):
-                raise TemplateDoesNotExist(template_name)
+                return False
+
+        return True
+
+    def load_template(self, template_name, template_dirs=None):
+        if not self._valid_template(template_name):
+            raise TemplateDoesNotExist(template_name)
+
         try:
             template = env.get_template(template_name)
             return template, template.filename
         except jinja2.TemplateNotFound:
             raise TemplateDoesNotExist(template_name)
+
+    def load_template_source(self, template_name, template_dirs=None):
+        if not self._valid_template(template_name):
+            raise TemplateDoesNotExist(template_name)
+
+        try:
+            template = env.get_template(template_name)
+        except jinja2.TemplateNotFound:
+            raise TemplateDoesNotExist(template_name)
+
+        with open(template.filename, 'rb') as fp:
+            return (fp.read().decode(settings.FILE_CHARSET), template.filename)
