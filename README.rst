@@ -19,7 +19,7 @@ Jingo is an adapter for using Jinja2_ templates within Django.
       Coffin_ attempts to reduce the differences between Jinja2_ templates
       and Django's native templates.
 
-    * Jingo has a far supperior name, as it is a portmanteau of 'Jinja' and
+    * Jingo has a far superior name, as it is a portmanteau of 'Jinja' and
       Django.
 
     .. _Coffin: https://github.com/coffin/coffin/
