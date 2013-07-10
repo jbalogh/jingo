@@ -1,12 +1,15 @@
 """
-This monkeypatches Django to support the __html__ protocol used in Jinja
-templates. Form, BoundField, ErrorList, and other form objects that
-render HTML through their __unicode__ method are extended with __html__
-so they can be rendered in Jinja templates without adding |safe.
+Django marks its form HTML "safe" according to its own rules, which Jinja2 does
+not recognize.
 
-Call the patch() function to execute the patch. It must be called
-before django.forms is imported for the conditional_escape patch to work
-properly. The root URLconf is the recommended location for calling patch().
+This monkeypatches Django to support the ``__html__`` protocol used in Jinja2
+templates. ``Form``, ``BoundField``, ``ErrorList``, and other form objects that
+render HTML through their ``__unicode__`` method are extended with ``__html__``
+so they can be rendered in Jinja2 templates without adding ``|safe``.
+
+Call the ``patch()`` function to execute the patch. It must be called
+before ``django.forms`` is imported for the conditional_escape patch to work
+properly. The root URLconf is the recommended location for calling ``patch()``.
 
 Usage::
 
