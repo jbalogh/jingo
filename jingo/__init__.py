@@ -210,7 +210,7 @@ class Loader(BaseLoader):
                 raise TemplateDoesNotExist(template_name)
 
         if hasattr(template_name, 'rsplit'):
-            app = template_name.rsplit('/', 1)[0]
+            app = template_name.rsplit('/')[0]
             if app in getattr(settings, 'JINGO_EXCLUDE_APPS', EXCLUDE_APPS):
                 raise TemplateDoesNotExist(template_name)
         try:
