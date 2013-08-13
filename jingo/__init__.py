@@ -12,6 +12,7 @@ from django.template.base import Origin, TemplateDoesNotExist
 from django.template.context import get_standard_processors
 from django.template.loader import BaseLoader
 from django.utils.importlib import import_module
+from django.test.signals import setting_changed
 
 import jinja2
 
@@ -32,6 +33,11 @@ _helpers_loaded = False
 
 class Environment(jinja2.Environment):
 
+    def __init__(self, *args, **kwargs):
+        super(Environment, self).__init__(*args, **kwargs)
+        self.setup_loaders()
+        setting_changed.connect(self._reset_loaders)
+
     def get_template(self, name, parent=None, globals=None):
         """Make sure our helpers get loaded before any templates."""
         load_helpers()
@@ -42,20 +48,27 @@ class Environment(jinja2.Environment):
         return super(Environment, self).from_string(source, globals,
                                                     template_class)
 
+    def setup_loaders(self):
+        x = ((jinja2.FileSystemLoader, settings.TEMPLATE_DIRS),
+             (jinja2.PackageLoader, settings.INSTALLED_APPS))
+        loaders = [loader(p) for loader, places in x for p in places]
+        self.loader = jinja2.ChoiceLoader(loaders)
+
+    def _reset_loaders(self, signal, sender, setting, value, **kwargs):
+        if setting in ["TEMPLATE_DIRS", "INSTALLED_APPS"]:
+            self.setup_loaders()
+
 
 def get_env():
     """Configure and return a jinja2 Environment."""
     # Mimic Django's setup by loading templates from directories in
     # TEMPLATE_DIRS and packages in INSTALLED_APPS.
-    x = ((jinja2.FileSystemLoader, settings.TEMPLATE_DIRS),
-         (jinja2.PackageLoader, settings.INSTALLED_APPS))
-    loaders = [loader(p) for loader, places in x for p in places]
+
 
     opts = {'trim_blocks': True,
             'extensions': ['jinja2.ext.i18n'],
             'autoescape': True,
             'auto_reload': settings.DEBUG,
-            'loader': jinja2.ChoiceLoader(loaders),
             }
 
     if hasattr(settings, 'JINJA_CONFIG'):
