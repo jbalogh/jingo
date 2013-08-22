@@ -1,7 +1,6 @@
 # These are the reqs to build docs and run tests.
-Django==1.5.1
+Django==1.5.2
 sphinx
-jinja2
+jinja2==2.7
 nose
 mock
-fabric

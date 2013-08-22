@@ -21,9 +21,13 @@ from the nuggets project at
 https://github.com/mozilla/nuggets/blob/master/safe_django_forms.py
 
 """
+
+from __future__ import unicode_literals
+
 import django.utils.encoding
 import django.utils.html
 import django.utils.safestring
+from django.utils import six
 
 
 # This function gets directly imported within Django, so this change needs to
@@ -47,7 +51,7 @@ def __html__(self):
 
     Allows interoperability with other template engines.
     """
-    return unicode(self)
+    return six.text_type(self)
 
 
 # Django uses StrAndUnicode for classes like Form, BoundField, Widget which
@@ -57,7 +61,7 @@ class SafeStrAndUnicode(django.utils.encoding.StrAndUnicode):
     """A class whose __str__ and __html__ returns __unicode__."""
 
     def __html__(self):
-        return unicode(self)
+        return six.text_type(self)
 
 
 def patch():

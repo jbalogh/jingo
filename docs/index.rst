@@ -154,9 +154,9 @@ could create a link if I knew how to do that.
 
 The other method uses Jinja's ``trans`` tag::
 
-        {% trans user=review.user|user_link, date=review.created|datetime %}
-          by {{ user }} on {{ date }}
-        {% endtrans %}
+    {% trans user=review.user|user_link, date=review.created|datetime %}
+      by {{ user }} on {{ date }}
+    {% endtrans %}
 
 ``trans`` is nice when you have a lot of text or want to inject some variables
 directly.  Both methods are useful, pick the one that makes you happy.
@@ -174,6 +174,11 @@ not recognize.
 Testing
 -------
 
-Testing is handle via fabric::
+To run the test suite, you need to define ``DJANGO_SETTINGS_MODULE`` first::
 
-    fab test
+    $ export DJANGO_SETTINGS_MODULE="fake_settings"
+    $ nosetests
+
+or simply run::
+
+    $ python run_tests.py

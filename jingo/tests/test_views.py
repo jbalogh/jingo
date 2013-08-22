@@ -1,6 +1,11 @@
+from __future__ import unicode_literals
+
 from django.utils import translation
 
-from mock import sentinel
+try:
+    from unittest.mock import sentinel
+except ImportError:
+    from mock import sentinel
 from nose.tools import eq_
 
 from jingo import get_env, render_to_string

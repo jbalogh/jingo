@@ -1,8 +1,13 @@
+from __future__ import unicode_literals
+
 from django.shortcuts import render
 import jinja2
 
 from nose.tools import eq_
-from mock import Mock, patch, sentinel
+try:
+    from unittest.mock import Mock, patch, sentinel
+except ImportError:
+    from mock import Mock, patch, sentinel
 
 import jingo
 
