@@ -1,6 +1,14 @@
+# coding: utf-8
+
+from __future__ import unicode_literals, print_function
+
+from django.utils import six
 from django.utils.translation import ugettext as _
 from django.template.defaulttags import CsrfTokenNode
-from django.utils.encoding import smart_unicode
+try:
+    from django.utils.encoding import smart_unicode as smart_text
+except ImportError:
+    from django.utils.encoding import smart_text
 from django.core.urlresolvers import reverse
 
 import jinja2
@@ -23,7 +31,6 @@ def f(string, *args, **kwargs):
     >>> {{ "{0} arguments and {x} arguments"|f('positional', x='keyword') }}
     "positional arguments and keyword arguments"
     """
-    string = unicode(string)
     return string.format(*args, **kwargs)
 
 
@@ -32,12 +39,12 @@ def fe(string, *args, **kwargs):
     """Format a safe string with potentially unsafe arguments, then return a
     safe string."""
 
-    string = unicode(string)
+    string = six.text_type(string)
 
-    args = [jinja2.escape(smart_unicode(v)) for v in args]
+    args = [jinja2.escape(smart_text(v)) for v in args]
 
     for k in kwargs:
-        kwargs[k] = jinja2.escape(smart_unicode(kwargs[k]))
+        kwargs[k] = jinja2.escape(smart_text(kwargs[k]))
 
     return jinja2.Markup(string.format(*args, **kwargs))
 
@@ -54,8 +61,12 @@ def nl2br(string):
 def datetime(t, fmt=None):
     """Call ``datetime.strftime`` with the given format string."""
     if fmt is None:
-        fmt = _('%B %e, %Y')
-    return smart_unicode(t.strftime(fmt.encode('utf-8'))) if t else u''
+        fmt = _(u'%B %e, %Y')
+    if not six.PY3:
+        # The datetime.strftime function strictly does not
+        # support Unicode in Python 2 but is Unicode only in 3.x.
+        fmt = fmt.encode('utf-8')
+    return smart_text(t.strftime(fmt)) if t else ''
 
 
 @register.filter

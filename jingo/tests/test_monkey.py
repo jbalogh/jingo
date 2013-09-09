@@ -1,11 +1,14 @@
+from __future__ import unicode_literals
+
 from django import forms
+from django.utils import six
 
 from jinja2 import escape
 from nose.tools import eq_
 
-import jingo
 import jingo.monkey
-from test_helpers import render
+
+from .utils import render
 
 
 class MyForm(forms.Form):
@@ -23,5 +26,5 @@ def test_monkey_patch():
     jingo.monkey.patch()
     eq_(html, render(t, context))
 
-    s = unicode(form['email'])
+    s = six.text_type(form['email'])
     eq_(s, render('{{ form.email }}', {'form': form}))

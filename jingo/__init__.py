@@ -1,4 +1,7 @@
 """Adapter for using Jinja2 with Django."""
+
+from __future__ import unicode_literals
+
 import functools
 import imp
 import logging
