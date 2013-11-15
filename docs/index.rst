@@ -182,3 +182,8 @@ To run the test suite, you need to define ``DJANGO_SETTINGS_MODULE`` first::
 or simply run::
 
     $ python run_tests.py
+
+To test on all supported versions of Python and Django::
+
+    $ pip install tox
+    $ tox
