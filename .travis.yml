@@ -1,16 +1,15 @@
 language: python
-python:
-  - "2.6"
-  - "2.7"
-  - "3.3"
+python: 2.6
 env:
-  - DJANGO_VERSION=1.4.6
-  - DJANGO_VERSION=1.5.2
+  - TOX_ENV=py26-1.4
+  - TOX_ENV=py26-1.5
+  - TOX_ENV=py26-1.6
+  - TOX_ENV=py27-1.4
+  - TOX_ENV=py27-1.5
+  - TOX_ENV=py27-1.6
+  - TOX_ENV=py33-1.5
+  - TOX_ENV=py33-1.6
 install:
-  - pip install Django==${DJANGO_VERSION}
-  - pip install -r requirements.txt
-matrix:
-  exclude:
-    - python: "3.3"
-      env: DJANGO_VERSION=1.4.6
-script: python run_tests.py
+  - pip install tox
+script:
+  - tox -e $TOX_ENV
