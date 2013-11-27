@@ -39,8 +39,24 @@ your view the same way you'd render Django templates::
 
 .. note::
 
-    Not only does ``django.shorcuts.render`` work, but so does any method that
-    Django provides to render templates.
+    Not only does ``django.shortcuts.render`` work, but so does any method that
+    Django provides to render templates from files.
+
+If you're using Django's low-level :class:`Template`
+class with a literal string, e.g.::
+
+     from django.templates import Template
+
+     t = Template('template string')
+
+then you'll need to change that code slightly, to::
+
+    from jingo import env
+
+    t = env.from_string('template_string')
+
+and then the template will be rendered with all the same features that Jingo
+provides when rendering template files.
 
 .. _settings:
 
