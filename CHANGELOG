@@ -1,15 +1,15 @@
 CHANGES
 =======
 
-v0.x.y
-------
+v0.7
+----
 
 * Added Python 3 support.
-
-v0.6.2
-------
-
 * Add context_processors application to EXCLUDE_APPS.
+* Add tox config.
+* Support template source in debug toolbar.
+* Fix many documentation issues.
+* Fix deprecation warnings.
 
 v0.6.1
 ------
