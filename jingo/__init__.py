@@ -34,11 +34,9 @@ class Environment(jinja2.Environment):
 
     def get_template(self, name, parent=None, globals=None):
         """Make sure our helpers get loaded before any templates."""
-        load_helpers()
         return super(Environment, self).get_template(name, parent, globals)
 
     def from_string(self, source, globals=None, template_class=None):
-        load_helpers()
         return super(Environment, self).from_string(source, globals,
                                                     template_class)
 
@@ -95,10 +93,6 @@ def load_helpers():
     """Try to import ``helpers.py`` from each app in INSTALLED_APPS."""
     # We want to wait as long as possible to load helpers so there aren't any
     # weird circular imports with jingo.
-    global _helpers_loaded
-    if _helpers_loaded:
-        return
-    _helpers_loaded = True
 
     from jingo import helpers  # noqa
 
