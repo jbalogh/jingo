@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 
+import cgi
 from datetime import datetime
 from collections import namedtuple
 
@@ -179,6 +180,18 @@ def test_filter_override():
     eq_(s, 'str')
 
 
+def _check_query(path, result=None, **query):
+    paramed = helpers.urlparams(path, **query)
+    if result is None:
+        result = query
+    for k, v in result.items():
+        if not isinstance(v, list):
+            result[k] = [v]
+    qs = cgi.parse_qs(paramed.split('?')[1])
+    for k in query:
+        eq_(set(result[k]), set(qs[k]))
+
+
 def test_urlparams_unicode():
     context = {'q': u'Fran\xe7ais'}
     eq_(u'/foo?q=Fran%C3%A7ais', helpers.urlparams('/foo', **context))
@@ -187,29 +200,23 @@ def test_urlparams_unicode():
 
 
 def test_urlparams_valid():
-    context = {'a': 'foo', 'b': 'bar'}
-    eq_(u'/foo?a=foo&b=bar', helpers.urlparams('/foo', **context))
+    _check_query('/foo', a='foo', b='bar')
 
 
 def test_urlparams_query_string():
-    eq_(u'/foo?a=foo&b=bar', helpers.urlparams('/foo?a=foo', b='bar'))
+    _check_query('/foo?a=foo', result={'a': 'foo', 'b': 'bar'}, b='bar')
 
 
 def test_urlparams_multivalue():
-    result = helpers.urlparams('/foo?a=foo&a=bar')
-    q = QueryDict(result.split('?')[1])
-    eq_(set(['foo', 'bar']), set(q.getlist('a')))
-
-    result = helpers.urlparams('/foo', a=['foo', 'bar'])
-    q = QueryDict(result.split('?')[1])
-    eq_(set(['foo', 'bar']), set(q.getlist('a')))
-
+    _check_query('/foo?a=foo&a=bar', result={'a': ['foo', 'bar']})
+    _check_query('/foo', a=['foo', 'bar'])
     eq_(u'/foo?a=bar', helpers.urlparams('/foo?a=foo', a='bar'))
 
 
 def test_urlparams_none():
-    """Assert a value of None doesn't make it into the query string."""
+    """A value of None doesn't make it into the query string."""
     eq_(u'/foo', helpers.urlparams('/foo', bar=None))
+    eq_(u'/foo', helpers.urlparams('/foo?a=bar', a=None))
 
 
 def test_urlparams_fragment():
