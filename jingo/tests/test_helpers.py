@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 from collections import namedtuple
 
+from django.http import QueryDict
 from django.utils import six
 from jinja2 import Markup
 try:
@@ -195,8 +196,14 @@ def test_urlparams_query_string():
 
 
 def test_urlparams_multivalue():
-    eq_(u'/foo?a=foo&a=bar', helpers.urlparams('/foo?a=foo&a=bar'))
-    eq_(u'/foo?a=foo&a=bar', helpers.urlparams('/foo', a=['foo', 'bar']))
+    result = helpers.urlparams('/foo?a=foo&a=bar')
+    q = QueryDict(result.split('?')[1])
+    eq_(set(['foo', 'bar']), set(q.getlist('a')))
+
+    result = helpers.urlparams('/foo', a=['foo', 'bar'])
+    q = QueryDict(result.split('?')[1])
+    eq_(set(['foo', 'bar']), set(q.getlist('a')))
+
     eq_(u'/foo?a=bar', helpers.urlparams('/foo?a=foo', a='bar'))
 
 
