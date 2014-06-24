@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+v0.7.1
+------
+
+* Added |urlparams filter.
+* |field_attrs filter deletes attributes set to None.
+
+
 v0.7
 ----
 
@@ -11,10 +18,12 @@ v0.7
 * Fix many documentation issues.
 * Fix deprecation warnings.
 
+
 v0.6.1
 ------
 
 * Added JINGO_INCLUDE_PATTERN.
+
 
 v0.6
 ----
