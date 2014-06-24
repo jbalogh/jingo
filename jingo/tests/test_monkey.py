@@ -7,8 +7,6 @@ from django.utils import six
 from jinja2 import escape
 from nose.tools import eq_
 
-import jingo.monkey
-
 from .utils import render
 
 
@@ -24,6 +22,8 @@ def test_monkey_patch():
 
     if django.VERSION < (1, 7):
         eq_(escape(html), render(t, context))
+
+        import jingo.monkey
         jingo.monkey.patch()
 
     eq_(html, render(t, context))
