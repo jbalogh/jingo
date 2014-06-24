@@ -176,3 +176,36 @@ def test_filter_override():
     register.filter(g)
     s = render('{{ s|a }}', {'s': 'Str'})
     eq_(s, 'str')
+
+
+def test_urlparams_unicode():
+    context = {'q': u'Fran\xe7ais'}
+    eq_(u'/foo?q=Fran%C3%A7ais', helpers.urlparams('/foo', **context))
+    context['q'] = u'\u0125help'
+    eq_(u'/foo?q=%C4%A5help', helpers.urlparams('/foo', **context))
+
+
+def test_urlparams_valid():
+    context = {'a': 'foo', 'b': 'bar'}
+    eq_(u'/foo?a=foo&b=bar', helpers.urlparams('/foo', **context))
+
+
+def test_urlparams_query_string():
+    eq_(u'/foo?a=foo&b=bar', helpers.urlparams('/foo?a=foo', b='bar'))
+
+
+def test_urlparams_multivalue():
+    eq_(u'/foo?a=foo&a=bar', helpers.urlparams('/foo?a=foo&a=bar'))
+    eq_(u'/foo?a=foo&a=bar', helpers.urlparams('/foo', a=['foo', 'bar']))
+    eq_(u'/foo?a=bar', helpers.urlparams('/foo?a=foo', a='bar'))
+
+
+def test_urlparams_none():
+    """Assert a value of None doesn't make it into the query string."""
+    eq_(u'/foo', helpers.urlparams('/foo', bar=None))
+
+
+def test_urlparams_fragment():
+    eq_(u'/#foo', helpers.urlparams('/', fragment='foo'))
+    eq_(u'/#bar', helpers.urlparams('/#foo', fragment='bar'))
+    eq_(u'/', helpers.urlparams('/#foo', fragment=''))

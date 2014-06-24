@@ -2,14 +2,19 @@
 
 from __future__ import unicode_literals, print_function
 
-from django.utils import six
-from django.utils.translation import ugettext as _
+import urlparse
+
+from django.core.urlresolvers import reverse
+from django.http import QueryDict
 from django.template.defaulttags import CsrfTokenNode
+from django.utils import six
+from django.utils.encoding import smart_str
 try:
     from django.utils.encoding import smart_unicode as smart_text
 except ImportError:
     from django.utils.encoding import smart_text
-from django.core.urlresolvers import reverse
+from django.utils.http import urlencode
+from django.utils.translation import ugettext as _
 
 import jinja2
 
@@ -92,3 +97,37 @@ def field_attrs(field_inst, **kwargs):
 def url(viewname, *args, **kwargs):
     """Return URL using django's ``reverse()`` function."""
     return reverse(viewname, args=args, kwargs=kwargs)
+
+
+@register.filter
+def urlparams(url_, fragment=None, query_dict=None, **query):
+    """
+Add a fragment and/or query parameters to a URL.
+
+New query params will be appended to exising parameters, except duplicate
+names, which will be replaced.
+"""
+    url_ = urlparse.urlparse(url_)
+    fragment = fragment if fragment is not None else url_.fragment
+
+    q = url_.query
+    new_query_dict = (QueryDict(smart_str(q), mutable=True) if
+                      q else QueryDict('', mutable=True))
+    if query_dict:
+        for k, l in query_dict.lists():
+            new_query_dict[k] = None  # Replace, don't append.
+            for v in l:
+                new_query_dict.appendlist(k, v)
+
+    for k, v in query.items():
+        # Replace, don't append.
+        if isinstance(v, list):
+            new_query_dict.setlist(k, v)
+        else:
+            new_query_dict[k] = v
+
+    query_string = urlencode([(k, v) for k, l in new_query_dict.lists() for
+                              v in l if v is not None])
+    new = urlparse.ParseResult(url_.scheme, url_.netloc, url_.path,
+                               url_.params, query_string, fragment)
+    return new.geturl()
