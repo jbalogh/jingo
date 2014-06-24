@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import django
 from django import forms
 from django.utils import six
 
@@ -21,9 +22,10 @@ def test_monkey_patch():
     context = {'form': form}
     t = '{{ form.as_ul() }}'
 
-    eq_(escape(html), render(t, context))
+    if django.VERSION < (1, 7):
+        eq_(escape(html), render(t, context))
+        jingo.monkey.patch()
 
-    jingo.monkey.patch()
     eq_(html, render(t, context))
 
     s = six.text_type(form['email'])
