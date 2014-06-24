@@ -2,7 +2,10 @@
 
 from __future__ import unicode_literals, print_function
 
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 from django.core.urlresolvers import reverse
 from django.http import QueryDict
