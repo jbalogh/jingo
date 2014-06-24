@@ -108,26 +108,33 @@ def test_csrf():
     assert csrf in s
 
 
+class field(object):
+    def __init__(self):
+        self.field = namedtuple('_', 'widget')
+        self.field.widget = namedtuple('_', 'attrs')
+        self.field.widget.attrs = {'class': 'foo'}
+
+    def __str__(self):
+        attrs = self.field.widget.attrs
+        attr_str = ' '.join('%s="%s"' % (k, v)
+                            for (k, v) in six.iteritems(attrs))
+        return Markup('<input %s />' % attr_str)
+
+    def __html__(self):
+        return self.__str__()
+
+
 def test_field_attrs():
-    class field(object):
-        def __init__(self):
-            self.field = namedtuple('_', 'widget')
-            self.field.widget = namedtuple('_', 'attrs')
-            self.field.widget.attrs = {'class': 'foo'}
-
-        def __str__(self):
-            attrs = self.field.widget.attrs
-            attr_str = ' '.join('%s="%s"' % (k, v)
-                                for (k, v) in six.iteritems(attrs))
-            return Markup('<input %s />' % attr_str)
-
-        def __html__(self):
-            return self.__str__()
-
     f = field()
     s = render('{{ field|field_attrs(class="bar",name="baz") }}',
                {'field': f})
     htmleq_(s, '<input class="bar" name="baz" />')
+
+
+def test_field_attrs_none():
+    f = field()
+    s = render('{{ field|field_attrs(class=None,x=None) }}', {'field': f})
+    htmleq_(s, '<input  />')
 
 
 def test_url():

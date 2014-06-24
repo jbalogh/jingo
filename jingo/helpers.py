@@ -92,7 +92,14 @@ def class_selected(a, b):
 @register.filter
 def field_attrs(field_inst, **kwargs):
     """Adds html attributes to django form fields"""
-    field_inst.field.widget.attrs.update(kwargs)
+    for k, v in kwargs.items():
+        if v is not None:
+            field_inst.field.widget.attrs[k] = v
+        else:
+            try:
+                del field_inst.field.widget.attrs[k]
+            except KeyError:
+                pass
     return field_inst
 
 
