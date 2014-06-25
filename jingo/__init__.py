@@ -30,6 +30,15 @@ log = logging.getLogger('jingo')
 _helpers_loaded = False
 
 
+# In Django >= 1.7 we can get the installed apps from the app registry
+try:
+    from django.apps import apps
+except ImportError:
+    INSTALLED_APPS = settings.INSTALLED_APPS
+else:
+    INSTALLED_APPS = [c.name for c in apps.get_app_configs()]
+
+
 class Environment(jinja2.Environment):
 
     def get_template(self, name, parent=None, globals=None):
@@ -48,7 +57,7 @@ def get_env():
     # Mimic Django's setup by loading templates from directories in
     # TEMPLATE_DIRS and packages in INSTALLED_APPS.
     x = ((jinja2.FileSystemLoader, settings.TEMPLATE_DIRS),
-         (jinja2.PackageLoader, settings.INSTALLED_APPS))
+         (jinja2.PackageLoader, INSTALLED_APPS))
     loaders = [loader(p) for loader, places in x for p in places]
 
     opts = {'trim_blocks': True,
@@ -102,7 +111,7 @@ def load_helpers():
 
     from jingo import helpers  # noqa
 
-    for app in settings.INSTALLED_APPS:
+    for app in INSTALLED_APPS:
         try:
             app_path = import_module(app).__path__
         except AttributeError:
