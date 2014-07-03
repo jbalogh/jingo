@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 
+import django
 from django.shortcuts import render
-import jinja2
 
+import jinja2
 from nose.tools import eq_
 try:
     from unittest.mock import Mock, patch, sentinel
@@ -10,6 +11,11 @@ except ImportError:
     from mock import Mock, patch, sentinel
 
 import jingo
+
+
+def setup_module():
+    if hasattr(django, 'setup'):
+        django.setup()
 
 
 @patch('jingo.env')

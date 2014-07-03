@@ -200,10 +200,10 @@ def _check_query(path, result=None, **query):
 
 
 def test_urlparams_unicode():
-    context = {'q': u'Fran\xe7ais'}
-    eq_(u'/foo?q=Fran%C3%A7ais', helpers.urlparams('/foo', **context))
-    context['q'] = u'\u0125help'
-    eq_(u'/foo?q=%C4%A5help', helpers.urlparams('/foo', **context))
+    context = {'q': 'Fran\xe7ais'}
+    eq_('/foo?q=Fran%C3%A7ais', helpers.urlparams('/foo', **context))
+    context['q'] = '\u0125help'
+    eq_('/foo?q=%C4%A5help', helpers.urlparams('/foo', **context))
 
 
 def test_urlparams_valid():
@@ -217,16 +217,16 @@ def test_urlparams_query_string():
 def test_urlparams_multivalue():
     _check_query('/foo?a=foo&a=bar', result={'a': ['foo', 'bar']})
     _check_query('/foo', a=['foo', 'bar'])
-    eq_(u'/foo?a=bar', helpers.urlparams('/foo?a=foo', a='bar'))
+    eq_('/foo?a=bar', helpers.urlparams('/foo?a=foo', a='bar'))
 
 
 def test_urlparams_none():
     """A value of None doesn't make it into the query string."""
-    eq_(u'/foo', helpers.urlparams('/foo', bar=None))
-    eq_(u'/foo', helpers.urlparams('/foo?a=bar', a=None))
+    eq_('/foo', helpers.urlparams('/foo', bar=None))
+    eq_('/foo', helpers.urlparams('/foo?a=bar', a=None))
 
 
 def test_urlparams_fragment():
-    eq_(u'/#foo', helpers.urlparams('/', fragment='foo'))
-    eq_(u'/#bar', helpers.urlparams('/#foo', fragment='bar'))
-    eq_(u'/', helpers.urlparams('/#foo', fragment=''))
+    eq_('/#foo', helpers.urlparams('/', fragment='foo'))
+    eq_('/#bar', helpers.urlparams('/#foo', fragment='bar'))
+    eq_('/', helpers.urlparams('/#foo', fragment=''))

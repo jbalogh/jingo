@@ -69,7 +69,7 @@ def nl2br(string):
 def datetime(t, fmt=None):
     """Call ``datetime.strftime`` with the given format string."""
     if fmt is None:
-        fmt = _(u'%B %e, %Y')
+        fmt = _('%B %e, %Y')
     if not six.PY3:
         # The datetime.strftime function strictly does not
         # support Unicode in Python 2 but is Unicode only in 3.x.
