@@ -32,29 +32,32 @@ def csrf(context):
 
 
 @register.filter
-def f(string, *args, **kwargs):
+def f(s, *args, **kwargs):
     """
     Uses ``str.format`` for string interpolation.
+
+    **Note**: Always converts to s to text type before interpolation.
 
     >>> {{ "{0} arguments and {x} arguments"|f('positional', x='keyword') }}
     "positional arguments and keyword arguments"
     """
-    return string.format(*args, **kwargs)
+    s = six.text_type(s)
+    return s.format(*args, **kwargs)
 
 
 @register.filter
-def fe(string, *args, **kwargs):
+def fe(s, *args, **kwargs):
     """Format a safe string with potentially unsafe arguments, then return a
     safe string."""
 
-    string = six.text_type(string)
+    s = six.text_type(s)
 
     args = [jinja2.escape(smart_text(v)) for v in args]
 
     for k in kwargs:
         kwargs[k] = jinja2.escape(smart_text(kwargs[k]))
 
-    return jinja2.Markup(string.format(*args, **kwargs))
+    return jinja2.Markup(s.format(*args, **kwargs))
 
 
 @register.filter
