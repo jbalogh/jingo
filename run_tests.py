@@ -9,5 +9,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fake_settings'
 os.environ['PYTHONPATH'] = os.pathsep.join([ROOT,
                                             os.path.join(ROOT, 'examples')])
 
+import django
+if hasattr(django, 'setup'):
+    django.setup()
+
 if __name__ == '__main__':
     nose.main()
