@@ -54,10 +54,19 @@ def __html__(self):
     return six.text_type(self)
 
 
+class StrAndUnicode(object):
+    """
+    A class whose __str__ returns its __unicode__ as a UTF-8 bytestring.
+
+    Useful as a mix-in.
+    """
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')
+
 # Django uses StrAndUnicode for classes like Form, BoundField, Widget which
 # have a __unicode__ method which returns escaped html. We replace
 # StrAndUnicode with SafeStrAndUnicode to get the __html__ method.
-class SafeStrAndUnicode(django.utils.encoding.StrAndUnicode):
+class SafeStrAndUnicode(StrAndUnicode):
     """A class whose __str__ and __html__ returns __unicode__."""
 
     def __html__(self):
@@ -86,8 +95,8 @@ def patch():
 
     for cls in classes:
         bases = list(cls.__bases__)
-        if django.utils.encoding.StrAndUnicode in bases:
-            idx = bases.index(django.utils.encoding.StrAndUnicode)
+        if StrAndUnicode in bases:
+            idx = bases.index(StrAndUnicode)
             bases[idx] = SafeStrAndUnicode
             cls.__bases__ = tuple(bases)
     for cls in classes:
