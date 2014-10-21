@@ -11,7 +11,7 @@ os.environ['PYTHONPATH'] = os.pathsep.join([ROOT,
                                             os.path.join(ROOT, 'examples')])
 
 if __name__ == '__main__':
-    if django.VERSION[:2] >= (1, 7):
+    if hasattr(django, 'setup'):
         # Django's app registry was added in 1.7. We need to call `setup` to
         # initiate it.
         django.setup()
