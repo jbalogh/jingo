@@ -29,6 +29,19 @@ import django.utils.html
 import django.utils.safestring
 from django.utils import six
 
+try:
+    # This was removed in Django 1.5+. We add it back to support Django 1.4.
+    from django.utils.encoding import StrAndUnicode
+    has_str_and_unicode = True
+except ImportError:
+    has_str_and_unicode = False
+    from django.utils.encoding import python_2_unicode_compatible
+
+    @python_2_unicode_compatible
+    class StrAndUnicode(object):
+        def __str__(self):
+            return self.code
+
 
 # This function gets directly imported within Django, so this change needs to
 # happen before too many Django imports happen.
@@ -57,7 +70,7 @@ def __html__(self):
 # Django uses StrAndUnicode for classes like Form, BoundField, Widget which
 # have a __unicode__ method which returns escaped html. We replace
 # StrAndUnicode with SafeStrAndUnicode to get the __html__ method.
-class SafeStrAndUnicode(django.utils.encoding.StrAndUnicode):
+class SafeStrAndUnicode(StrAndUnicode):
     """A class whose __str__ and __html__ returns __unicode__."""
 
     def __html__(self):
@@ -84,12 +97,13 @@ def patch():
         widgets.RadioFieldRenderer,
     )
 
-    for cls in classes:
-        bases = list(cls.__bases__)
-        if django.utils.encoding.StrAndUnicode in bases:
-            idx = bases.index(django.utils.encoding.StrAndUnicode)
-            bases[idx] = SafeStrAndUnicode
-            cls.__bases__ = tuple(bases)
+    if has_str_and_unicode:
+        for cls in classes:
+            bases = list(cls.__bases__)
+            if StrAndUnicode in bases:
+                idx = bases.index(StrAndUnicode)
+                bases[idx] = SafeStrAndUnicode
+                cls.__bases__ = tuple(bases)
     for cls in classes:
         if not hasattr(cls, '__html__'):
             cls.__html__ = __html__
