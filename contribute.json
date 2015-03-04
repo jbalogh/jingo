@@ -1,0 +1,21 @@
+{
+    "name": "jingo",
+    "description": "An adapter for using Jinja2 templates with Django.",
+    "repository": {
+        "url": "https://github.com/jbalogh/jingo",
+        "license": "BSD 3-Clause"
+    },
+    "participate": {
+        "home": "https://jingo.readthedocs.org/en/latest/",
+        "docs": "https://jingo.readthedocs.org/en/latest/#testing"
+    },
+    "bugs": {
+        "list": "https://github.com/jbalogh/jingo/issues",
+        "report": "https://github.com/jbalogh/jingo/issues/new"
+    },
+    "keywords": [
+        "django",
+        "python",
+        "jinja"
+    ]
+}
