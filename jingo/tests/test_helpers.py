@@ -26,6 +26,8 @@ def test_f():
     s = render('{{ "{0} : {z}"|f("a", z="b") }}')
     eq_(s, 'a : b')
 
+    s = helpers.f(Markup('this is {0}'), '<b>markup</b>')
+    eq_(s, 'this is <b>markup</b>')
 
 def test_fe_helper():
     context = {'var': '<bad>'}

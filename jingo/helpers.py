@@ -39,6 +39,7 @@ def f(string, *args, **kwargs):
     >>> {{ "{0} arguments and {x} arguments"|f('positional', x='keyword') }}
     "positional arguments and keyword arguments"
     """
+    string = six.text_type(string)
     return string.format(*args, **kwargs)
 
 
