@@ -30,7 +30,7 @@ def test_f():
 def test_f_unicode():
     s = render('{{ "foo {0}"|f(bar) }}', {'bar': u'bar\xe9'})
     eq_(s, u'foo bar\xe9')
-    s = render('{{ t|f(bar) }}', {'t': u'\xe9 {}', 'bar': 'baz'})
+    s = render('{{ t|f(bar) }}', {'t': u'\xe9 {0}', 'bar': 'baz'})
     eq_(s, u'\xe9 baz')
 
 
