@@ -7,6 +7,7 @@ v0.7.1
 * Fixed bug in |f.
 * Added |urlparams filter.
 * |field_attrs filter deletes attributes set to None.
+* Test in Django 1.7
 
 
 v0.7
