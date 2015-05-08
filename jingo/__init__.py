@@ -27,20 +27,42 @@ EXCLUDE_APPS = (
 
 log = logging.getLogger('jingo')
 
-_helpers_loaded = False
-
 
 class Environment(jinja2.Environment):
+    _helpers_loaded = False
 
     def get_template(self, name, parent=None, globals=None):
         """Make sure our helpers get loaded before any templates."""
-        load_helpers()
+        self._load_helpers()
         return super(Environment, self).get_template(name, parent, globals)
 
     def from_string(self, source, globals=None, template_class=None):
-        load_helpers()
+        self._load_helpers()
         return super(Environment, self).from_string(source, globals,
                                                     template_class)
+
+    def _load_helpers(self):
+        """Try to import ``helpers.py`` from each app in INSTALLED_APPS."""
+        # We want to wait as long as possible to load helpers so there aren't any
+        # weird circular imports with jingo.
+        if self._helpers_loaded:
+            return
+        self._helpers_loaded = True
+
+        from jingo import helpers  # noqa
+
+        for app in settings.INSTALLED_APPS:
+            try:
+                app_path = import_module(app).__path__
+            except AttributeError:
+                continue
+
+            try:
+                imp.find_module('helpers', app_path)
+            except ImportError:
+                continue
+
+            import_module('%s.helpers' % app)
 
 
 def get_env():
@@ -89,31 +111,6 @@ def render_to_string(request, template, context=None):
         template = env.get_template(template)
 
     return template.render(get_context())
-
-
-def load_helpers():
-    """Try to import ``helpers.py`` from each app in INSTALLED_APPS."""
-    # We want to wait as long as possible to load helpers so there aren't any
-    # weird circular imports with jingo.
-    global _helpers_loaded
-    if _helpers_loaded:
-        return
-    _helpers_loaded = True
-
-    from jingo import helpers  # noqa
-
-    for app in settings.INSTALLED_APPS:
-        try:
-            app_path = import_module(app).__path__
-        except AttributeError:
-            continue
-
-        try:
-            imp.find_module('helpers', app_path)
-        except ImportError:
-            continue
-
-        import_module('%s.helpers' % app)
 
 
 class Register(object):
