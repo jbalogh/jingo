@@ -27,6 +27,34 @@ def test_f():
     eq_(s, 'a : b')
 
 
+def test_f_unicode():
+    s = render('{{ "foo {0}"|f(bar) }}', {'bar': u'bar\xe9'})
+    eq_(s, u'foo bar\xe9')
+
+
+def test_f_markup():
+    format_string = 'Hello <b>{0}</b>'
+    format_markup = Markup(format_string)
+    val_string = '<em>Steve</em>'
+    val_markup = Markup(val_string)
+    template = '{{ fmt|f(val) }}'
+    expect = 'Hello &lt;b&gt;&lt;em&gt;Steve&lt;/em&gt;&lt;/b&gt;'
+
+    combinations = (
+        (format_string, val_string),
+        (format_string, val_markup),
+        (format_markup, val_string),
+        (format_markup, val_markup),
+    )
+
+    def _check(f, v):
+        s = render(template, {'fmt': f, 'val': v})
+        eq_(expect, s)
+
+    for f, v in combinations:
+        yield _check, f, v
+
+
 def test_fe_helper():
     context = {'var': '<bad>'}
     template = '{{ "<em>{t}</em>"|fe(t=var) }}'
@@ -46,11 +74,27 @@ def test_fe_unicode():
 
 
 def test_fe_markup():
-    context = {'var': Markup('<mark>safe</mark>')}
-    template = '{{ "<em>{0}</em>"|fe(var) }}'
-    eq_('<em><mark>safe</mark></em>', render(template, context))
-    template = '{{ "<em>{t}</em>"|fe(t=var) }}'
-    eq_('<em><mark>safe</mark></em>', render(template, context))
+    format_string = 'Hello <b>{0}</b>'
+    format_markup = Markup(format_string)
+    val_string = '<em>Steve</em>'
+    val_markup = Markup(val_string)
+    template = '{{ fmt|fe(val) }}'
+    expect_esc = 'Hello <b>&lt;em&gt;Steve&lt;/em&gt;</b>'
+    expect_noesc = 'Hello <b><em>Steve</em></b>'
+
+    combinations = (
+        (format_string, val_string, expect_esc),
+        (format_string, val_markup, expect_noesc),
+        (format_markup, val_string, expect_esc),
+        (format_markup, val_markup, expect_noesc),
+    )
+
+    def _check(f, v, e):
+        s = render(template, {'fmt': f, 'val': v})
+        eq_(e, s)
+
+    for f, v, e in combinations:
+        yield _check, f, v, e
 
 
 def test_nl2br():
