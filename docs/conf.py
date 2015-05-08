@@ -16,7 +16,7 @@ extensions = ['sphinx.ext.autodoc']
 
 # General information about the project.
 project = u'Jingo'
-copyright = u'2010-2014, The Mozilla Foundation'
+copyright = u'2010-2015, The Mozilla Foundation'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
