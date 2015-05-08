@@ -9,9 +9,11 @@ env:
   - TOX_ENV=py27-1.5
   - TOX_ENV=py27-1.6
   - TOX_ENV=py27-1.7
+  - TOX_ENV=py27-1.8
   - TOX_ENV=py33-1.5
   - TOX_ENV=py33-1.6
   - TOX_ENV=py33-1.7
+  - TOX_ENV=py33-1.8
 install:
   - pip install tox
 script:
