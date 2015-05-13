@@ -11,6 +11,7 @@ from django.conf import settings
 from django.template.base import Origin, TemplateDoesNotExist
 from django.template.loader import BaseLoader
 from django.utils.importlib import import_module
+import django
 
 import jinja2
 
@@ -60,7 +61,19 @@ def get_env():
     # TEMPLATE_DIRS and packages in INSTALLED_APPS.
     x = ((jinja2.FileSystemLoader, settings.TEMPLATE_DIRS),
          (jinja2.PackageLoader, settings.INSTALLED_APPS))
-    loaders = [loader(p) for loader, places in x for p in places]
+    loaders = []
+    for loader, places in x:
+        for p in places:
+            try:
+                loader(p)
+            except ImportError:
+                # Django 1.7 allows for speciying a path to an AppConfig class
+                if django.VERSION[:2] >= (1, 7):
+                    from django.apps import AppConfig
+                    app_config = AppConfig.create(p)
+                    p = app_config.name
+            finally:
+                loaders.append(loader(p))
 
     opts = {'trim_blocks': True,
             'extensions': ['jinja2.ext.i18n'],
@@ -116,6 +129,12 @@ def load_helpers():
     for app in settings.INSTALLED_APPS:
         try:
             app_path = import_module(app).__path__
+        except ImportError:
+            # Django 1.7 allows for speciying a path to an AppConfig class
+            if django.VERSION[:2] >= (1, 7):
+                from django.apps import AppConfig
+                app_config = AppConfig.create(app)
+                app_path = app_config.name
         except AttributeError:
             continue
 
