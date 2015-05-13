@@ -86,16 +86,19 @@ def patch():
 
     # Replace StrAndUnicode with SafeStrAndUnicode in the inheritance
     # for all these classes.
-    classes = (
+    classes = [
         forms.BaseForm,
         forms.BoundField,
         formsets.BaseFormSet,
         util.ErrorDict,
         util.ErrorList,
         widgets.Media,
-        widgets.RadioInput,
         widgets.RadioFieldRenderer,
-    )
+    ]
+    try:
+        classes.append(widgets.RadioChoiceInput)
+    except AttributeError:
+        classes.append(widgets.RadioInput)
 
     if has_str_and_unicode:
         for cls in classes:

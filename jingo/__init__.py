@@ -9,11 +9,22 @@ import re
 
 from django.conf import settings
 from django.template.base import Origin, TemplateDoesNotExist
-from django.template.context import get_standard_processors
 from django.template.loader import BaseLoader
 from django.utils.importlib import import_module
 
 import jinja2
+
+try:
+    from django.template.engine import Engine
+
+    has_engine = True
+
+    def get_standard_processors():
+        return Engine.get_default().template_context_processors
+
+except ImportError:
+    from django.template.context import get_standard_processors
+    has_engine = False
 
 VERSION = (0, 7, 1)
 __version__ = '.'.join(map(str, VERSION))
@@ -200,7 +211,10 @@ class Loader(BaseLoader):
     env.template_class = Template
 
     def __init__(self):
-        super(Loader, self).__init__()
+        if has_engine:
+            super(Loader, self).__init__(Engine.get_default())
+        else:
+            super(Loader, self).__init__()
         include_pattern = getattr(settings, 'JINGO_INCLUDE_PATTERN', None)
         if include_pattern:
             self.include_re = re.compile(include_pattern)
