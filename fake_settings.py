@@ -17,3 +17,10 @@ JINGO_EXCLUDE_APPS = ('django_app',)
 ROOT_URLCONF = 'jingo.tests.urls'
 
 SECRET_KEY = 'jingo'
+
+DATABASES={
+    "default": {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'override_settings.db'
+    }
+}
