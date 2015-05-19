@@ -37,7 +37,7 @@ EXCLUDE_APPS = (
 )
 
 log = logging.getLogger('jingo')
-
+env = None
 _helpers_loaded = False
 
 
@@ -56,33 +56,36 @@ class Environment(jinja2.Environment):
 
 def get_env():
     """Configure and return a jinja2 Environment."""
-    # Mimic Django's setup by loading templates from directories in
-    # TEMPLATE_DIRS and packages in INSTALLED_APPS.
-    x = ((jinja2.FileSystemLoader, settings.TEMPLATE_DIRS),
-         (jinja2.PackageLoader, settings.INSTALLED_APPS))
-    loaders = [loader(p) for loader, places in x for p in places]
-
-    opts = {'trim_blocks': True,
-            'extensions': ['jinja2.ext.i18n'],
-            'autoescape': True,
-            'auto_reload': settings.DEBUG,
-            'loader': jinja2.ChoiceLoader(loaders),
-            }
-
-    if hasattr(settings, 'JINJA_CONFIG'):
-        if hasattr(settings.JINJA_CONFIG, '__call__'):
-            config = settings.JINJA_CONFIG()
-        else:
-            config = settings.JINJA_CONFIG
-        opts.update(config)
-
-    e = Environment(**opts)
-    # Install null translations since gettext isn't always loaded up during
-    # testing.
-    if ('jinja2.ext.i18n' in e.extensions or
-            'jinja2.ext.InternationalizationExtension' in e.extensions):
-        e.install_null_translations()
-    return e
+    global env
+    if not env:
+        # Mimic Django's setup by loading templates from directories in
+        # TEMPLATE_DIRS and packages in INSTALLED_APPS.
+        x = ((jinja2.FileSystemLoader, settings.TEMPLATE_DIRS),
+             (jinja2.PackageLoader, settings.INSTALLED_APPS))
+        loaders = [loader(p) for loader, places in x for p in places]
+    
+        opts = {'trim_blocks': True,
+                'extensions': ['jinja2.ext.i18n'],
+                'autoescape': True,
+                'auto_reload': settings.DEBUG,
+                'loader': jinja2.ChoiceLoader(loaders),
+                }
+    
+        if hasattr(settings, 'JINJA_CONFIG'):
+            if hasattr(settings.JINJA_CONFIG, '__call__'):
+                config = settings.JINJA_CONFIG()
+            else:
+                config = settings.JINJA_CONFIG
+            opts.update(config)
+    
+        env = Environment(**opts)
+        # Install null translations since gettext isn't always loaded up during
+        # testing.
+        if ('jinja2.ext.i18n' in env.extensions or
+                'jinja2.ext.InternationalizationExtension' in env.extensions):
+            env.install_null_translations()
+        
+    return env
 
 
 def render_to_string(request, template, context=None):
@@ -172,8 +175,7 @@ class Register(object):
             return self.function(wrapper)
         return decorator
 
-env = get_env()
-register = Register(env)
+register = Register(get_env())
 
 
 class Template(jinja2.Template):
