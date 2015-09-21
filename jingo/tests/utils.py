@@ -1,7 +1,7 @@
 from django.test.html import HTMLParseError, parse_html
 from nose.tools import eq_
 
-from jingo import env
+from jingo import get_env
 
 
 def htmleq_(html1, html2, msg=None):
@@ -31,5 +31,5 @@ def assert_and_parse_html(html, user_msg, msg):
 
 
 def render(s, context={}):
-    t = env.from_string(s)
+    t = get_env().from_string(s)
     return t.render(context)

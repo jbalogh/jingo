@@ -4,6 +4,7 @@ path = lambda *a: os.path.join(ROOT, *a)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 INSTALLED_APPS = (
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'jingo.tests.jinja_app',
     'jingo.tests.django_app',
 )

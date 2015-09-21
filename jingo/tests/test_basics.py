@@ -12,10 +12,12 @@ except ImportError:
 import jingo
 
 
-@patch('jingo.env')
-def test_render(mock_env):
+@patch('jingo.get_env')
+def test_render(mock_get_env):
     mock_template = Mock()
+    mock_env = Mock()
     mock_env.get_template.return_value = mock_template
+    mock_get_env.return_value = mock_env
 
     response = render(Mock(), sentinel.template, status=32)
     mock_env.get_template.assert_called_with(sentinel.template)
@@ -24,19 +26,22 @@ def test_render(mock_env):
     eq_(response.status_code, 32)
 
 
-@patch('jingo.env')
-def test_render_to_string(mock_env):
+@patch('jingo.get_env')
+def test_render_to_string(mock_get_env):
     template = jinja2.environment.Template('The answer is {{ answer }}')
     rendered = jingo.render_to_string(Mock(), template, {'answer': 42})
 
     eq_(rendered, 'The answer is 42')
 
 
-@patch('jingo.env.get_template')
-def test_inclusion_tag(get_template):
+def test_inclusion_tag():
     @jingo.register.inclusion_tag('xx.html')
     def tag(x):
         return {'z': x}
-    get_template.return_value = jinja2.environment.Template('<{{ z }}>')
-    t = jingo.env.from_string('{{ tag(1) }}')
-    eq_('<1>', t.render())
+
+    env = jingo.get_env()
+    with patch.object(env, 'get_template') as mock_get_template:
+        temp = jinja2.environment.Template('<{{ z }}>')
+        mock_get_template.return_value = temp
+        t = env.from_string('{{ tag(1) }}')
+        eq_('<1>', t.render())
