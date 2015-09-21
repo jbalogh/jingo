@@ -3,9 +3,21 @@
 from __future__ import unicode_literals
 
 import functools
-import imp
 import logging
 import re
+
+try:
+    import importlib.util
+    def has_helpers(path):
+        return importlib.util.find_spec('helpers', path) is not None
+except ImportError:
+    import imp
+    def has_helpers(path):
+        try:
+            imp.find_module('helpers', path)
+            return True
+        except ImportError:
+            return False
 
 from django.apps import apps
 from django.conf import settings
@@ -153,9 +165,7 @@ def load_helpers():
     from jingo import helpers  # noqa
 
     for config in apps.get_app_configs():
-        try:
-            imp.find_module('helpers', config.name)
-        except ImportError:
+        if not has_helpers(config.name):
             continue
 
         import_module('%s.helpers' % config.name)
