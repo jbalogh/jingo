@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+v0.8
+----
+
+* Dropped support for Django < 1.7.
+* Added support for Django 1.8.
+* Added support for AdminConfig classes in installed apps
+* Removed jingo.env, use jingo.get_env().
+* Fixed #50, resolves circular import.
+
 v0.7.1
 ------
 
