@@ -7,6 +7,19 @@ Jingo
 
 Jingo is an adapter for using Jinja2_ templates within Django.
 
+.. image:: https://secure.travis-ci.org/jbalogh/jingo.png?branch=master
+   :alt: Build Status
+   :target: https://secure.travis-ci.org/jbalogh/jingo
+
+* Author: Jeff Balogh and contributors_
+* Licence: BSD
+* Compatibility: Python 2.6, 2.7 and 3.3, Django 1.4, 1.5 and 1.6
+* Requirements: jinja2
+* Project URL: https://github.com/jbalogh/jingo/
+* Documentation: http://jingo.readthedocs.org/en/latest/
+
+.. _contributors: https://github.com/jbalogh/jingo/contributors
+
 .. note:: Coffin or Jingo?
 
     Jingo differs from Coffin_ in two major ways:
@@ -165,8 +178,7 @@ Since we all love L10n, let's see what it looks like in Jinja templates::
     <h2>{{ _('Reviews for {0}')|f(addon.name) }}</h2>
 
 The simple way is to use the familiar underscore and string within a ``{{ }}``
-moustache block.  ``f`` is an interpolation filter documented below.  Sphinx
-could create a link if I knew how to do that.
+moustache block.  :meth:`f` is an interpolation filter documented above.
 
 The other method uses Jinja's ``trans`` tag::
 
@@ -180,9 +192,6 @@ directly.  Both methods are useful, pick the one that makes you happy.
 
 Forms
 -----
-
-Django marks its form HTML "safe" according to its own rules, which Jinja2 does
-not recognize.
 
 .. automodule:: jingo.monkey
 

@@ -11,6 +11,20 @@ Jingo
 
 Jingo is an adapter for using Jinja2_ templates within Django.
 
+.. image:: https://secure.travis-ci.org/jbalogh/jingo.png?branch=master
+   :alt: Build Status
+   :target: https://secure.travis-ci.org/jbalogh/jingo
+
+:Author:        Jeff Balogh and contributors_
+:Licence:       BSD
+:Compatibility: Python 2.6, 2.7 and 3.3, Django 1.4, 1.5 and 1.6
+:Requirements:  jinja2
+:Project URL:   https://github.com/jbalogh/jingo/
+:Documentation: http://jingo.readthedocs.org/en/latest/
+
+.. _contributors: https://github.com/jbalogh/jingo/contributors
+
+
 .. note:: Coffin or Jingo?
 
     Jingo differs from Coffin_ in two major ways:
