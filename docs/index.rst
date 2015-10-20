@@ -51,9 +51,9 @@ class with a literal string, e.g.::
 
 then you'll need to change that code slightly, to::
 
-    from jingo import env
+    from jingo import get_env
 
-    t = env.from_string('template_string')
+    t = get_env().from_string('template_string')
 
 and then the template will be rendered with all the same features that Jingo
 provides when rendering template files.
