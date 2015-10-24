@@ -53,7 +53,7 @@ except ImportError:
     from django.template.context import get_standard_processors
     has_engine = False
 
-VERSION = (0, 8, 0)
+VERSION = (0, 8, 1)
 __version__ = '.'.join(map(str, VERSION))
 
 EXCLUDE_APPS = (
