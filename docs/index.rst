@@ -7,19 +7,23 @@ Jingo
 
 Jingo is an adapter for using Jinja2_ templates within Django.
 
-.. note:: Coffin or Jingo?
 
-    Jingo differs from Coffin_ in two major ways:
+NB: Django 1.8 and django-jinja
+-------------------------------
 
-    * Jingo serves purely as a minimalistic bridge between Django and Jinja2_.
-      Coffin_ attempts to reduce the differences between Jinja2_ templates
-      and Django's native templates.
+In version 1.8, Django added support for multiple template engines, and
+the django-jinja_ project leverages that to support Jinja2_, while Jingo
+does not.
 
-    * Jingo has a far superior name, as it is a portmanteau of 'Jinja' and
-      Django.
+**django-jinja is recommended for new projects.** Jingo supports Django
+1.8, but it is not clear that its method will continue work beyond that.
+If you're already using Jingo, and not ready to make `the switch`_,
+Jingo will continue to work for now, but is undecided about continuing
+to support new Django versions.
 
-    .. _Coffin: https://github.com/coffin/coffin/
-    .. _Jinja2: http://jinja.pocoo.org/2/
+.. _django-jinja: https://github.com/niwinz/django-jinja
+.. _the switch: http://bluesock.org/~willkg/blog/mozilla/input_django_1_8_upgrade.html#switching-from-jingo-to-django-jinja
+.. _Jinja2: http://jinja.pocoo.org/2/
 
 
 .. _usage:
