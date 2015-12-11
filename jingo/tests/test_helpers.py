@@ -276,3 +276,8 @@ def test_urlparams_fragment():
     eq_(u'/#foo', helpers.urlparams('/', fragment='foo'))
     eq_(u'/#bar', helpers.urlparams('/#foo', fragment='bar'))
     eq_(u'/', helpers.urlparams('/#foo', fragment=''))
+
+def test_helpers_loaded():
+    """Test that helpers are loaded correctly."""
+    s = render('{{ "something"|test_filter }}')
+    eq_('Success!', s)
