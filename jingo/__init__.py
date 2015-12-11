@@ -34,7 +34,7 @@ except ImportError:
 
     def has_helpers(path):
         try:
-            imp.find_module('helpers', path)
+            imp.find_module('helpers', [path.replace('.', '/')])
             return True
         except ImportError:
             return False
