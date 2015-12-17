@@ -179,10 +179,10 @@ def load_helpers():
     from jingo import helpers  # noqa
 
     for config in apps.get_app_configs():
-        if not has_helpers(config.name):
-            continue
-
-        import_module('%s.helpers' % config.name)
+        try:
+            import_module('%s.helpers' % config.name)
+        except ImportError:
+            pass
 
 
 class Register(object):
