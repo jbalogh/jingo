@@ -11,6 +11,8 @@ except ImportError:
 
 import jingo
 
+from .utils import render as render_string
+
 
 @patch('jingo.get_env')
 def test_render(mock_get_env):
@@ -45,3 +47,9 @@ def test_inclusion_tag():
         mock_get_template.return_value = temp
         t = env.from_string('{{ tag(1) }}')
         eq_('<1>', t.render())
+
+
+def test_helpers_loaded():
+    """Test that helpers are loaded correctly."""
+    s = render_string('{{ "something"|test_filter }}', {})
+    eq_('Success!', s)
