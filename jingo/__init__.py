@@ -16,7 +16,8 @@ try:
     import importlib.util
     if hasattr(importlib.util, 'find_spec'):  # Py3>=3.4
         def has_helpers(config):
-            return importlib.util.find_spec('%s.helpers' % config.name) is not None
+            module = '%s.helpers' % (config.name,)
+            return importlib.util.find_spec(module) is not None
     else:  # Py3<3.4
         def has_helpers(config):
             # For Python 3.3, just try to import the module. Unfortunately,
