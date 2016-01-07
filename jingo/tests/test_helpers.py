@@ -7,7 +7,6 @@ import cgi
 from datetime import datetime
 from collections import namedtuple
 
-from django.http import QueryDict
 from django.utils import six
 from jinja2 import Markup
 try:
