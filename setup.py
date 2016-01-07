@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='jingo',
-    version='0.8.1',
+    version='0.8.2',
     description='An adapter for using Jinja2 templates with Django.',
     long_description=open('README.rst').read(),
     author='James Socol',

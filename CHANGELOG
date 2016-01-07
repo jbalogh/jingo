@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+v0.8.2
+------
+
+* Fixed issue in helper autodiscovery that prevented some modules from
+  getting discovered.
+
 v0.8.1
 ------
 
