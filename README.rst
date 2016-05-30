@@ -106,14 +106,23 @@ If you want to configure the Jinja environment, use ``JINJA_CONFIG`` in
 
     JINJA_CONFIG = {'autoescape': False}
 
-or ::
+or::
 
     def JINJA_CONFIG():
         return {'the_answer': 41 + 1}
 
+If you set the ``extensions`` key in the configuration, you **must**
+include ``jingo.ext.JingoExtension`` to get Jingo's built-in template
+helpers (see below).
+
 
 Template Helpers
 ----------------
+
+.. note::
+
+    In the interest of future-proofing, consider writing custom filters and
+    functions as Jinja extensions. See ``jingo/ext.py`` for a simple example.
 
 Instead of template tags, Jinja encourages you to add functions and filters to
 the templating environment.  In ``jingo``, we call these helpers.  When the
@@ -130,23 +139,18 @@ the environment extension:
     Adds the decorated function to Jinja's global namespace.
 
 
-.. highlight:: jinja
-
 Default Helpers
 ~~~~~~~~~~~~~~~
 
 Helpers are available in all templates automatically, without any extra
-loading.
-
-.. automodule:: jingo.helpers
-    :members:
+loading. See ``jingo/ext.py`` for their definitions.
 
 
 Template Environment
 --------------------
 
 A single Jinja ``Environment`` is created for use in all templates.  This is
-available as ``jingo.env`` if you need to work with the ``Environment``.
+available via ``jingo.get_env()`` if you need to work with the ``Environment``.
 
 
 Localization
