@@ -12,22 +12,32 @@ Jingo
 Jingo is an adapter for using Jinja2_ templates within Django.
 
 
-NB: Django 1.8 and django-jinja
--------------------------------
+Jingo is DEPRECATED
+-------------------
 
-In version 1.8, Django added support for multiple template engines, and
-the django-jinja_ project leverages that to support Jinja2_, while Jingo
-does not.
+In version 1.8, Django added support for multiple template engines, and provided
+a Jinja2 backend.  The django-jinja_ project leverages that to support Jinja2,
+while Jingo does not.
 
-**django-jinja is recommended for new projects.** Jingo supports Django
-1.8, but it is not clear that its method will continue work beyond that.
-If you're already using Jingo, and not ready to make `the switch`_,
-Jingo will continue to work for now, but is undecided about continuing
-to support new Django versions.
+**django-jinja is recommended for new projects.** Jingo >=0.8 supports Django
+1.8, but it will not be maintained beyond version 0.9, and **will not** support
+Django 1.9 or above.  If you're already using Jingo, and not ready to make `the
+switch`_, Jingo should continue to work for now, though not without some effort.
+
+0.9_ will be the last release of Jingo, unless a new maintainer comes along with
+a new direction.
+
+As of 0.9, Jingo's built-in helpers are provided via a `Jinja2 extension`_ to
+simplify moving away from Jingo. The entire ``jingo/ext.py`` file can be copied
+into another project, or referenced as ``'jingo.ext.JingoExtension'``. Used in
+this way, Jingo plays nicely with django-jinja (and theoretically Django's
+built-in Jinja2 backend).
 
 .. _django-jinja: https://github.com/niwinz/django-jinja
 .. _the switch: http://bluesock.org/~willkg/blog/mozilla/input_django_1_8_upgrade.html#switching-from-jingo-to-django-jinja
 .. _Jinja2: http://jinja.pocoo.org/2/
+.. _0.9: https://https://pypi.python.org/pypi/jingo/0.9.0
+.. _Jinja2 extension: https://github.com/jbalogh/jingo/blob/master/jingo/ext.py
 
 
 .. _usage:
