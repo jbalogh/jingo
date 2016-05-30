@@ -5,10 +5,6 @@
 Jingo
 =====
 
-.. note:: This document may be out of date.  The up-to-date documentation can
-   be found on `Read the Docs <https://jingo.readthedocs.org/en/latest/>`_.
-
-
 Jingo is an adapter for using Jinja2_ templates within Django.
 
 
