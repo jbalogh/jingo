@@ -10,7 +10,11 @@ from django.apps import apps
 from django.conf import settings
 from django.template.base import Origin, TemplateDoesNotExist
 from django.template.loader import BaseLoader
-from django.utils.importlib import import_module
+
+try:
+    from importlib import import_module
+except ImportError:
+    from django.utils.importlib import import_module
 
 try:
     import importlib.util
