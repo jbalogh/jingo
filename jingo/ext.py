@@ -20,18 +20,15 @@ from django.utils.http import urlencode
 from django.utils.translation import ugettext as _
 
 import jinja2
+from jinja2.ext import Extension
 
-from jingo import register
 
-
-@register.function
 @jinja2.contextfunction
 def csrf(context):
     """Equivalent of Django's ``{% crsf_token %}``."""
     return jinja2.Markup(CsrfTokenNode().render(context))
 
 
-@register.filter
 def f(s, *args, **kwargs):
     """
     Uses ``str.format`` for string interpolation.
@@ -41,11 +38,11 @@ def f(s, *args, **kwargs):
     >>> {{ "{0} arguments and {x} arguments"|f('positional', x='keyword') }}
     "positional arguments and keyword arguments"
     """
+    # TODO: Warning
     s = six.text_type(s)
     return s.format(*args, **kwargs)
 
 
-@register.filter
 def fe(s, *args, **kwargs):
     """Format a safe string with potentially unsafe arguments, then return a
     safe string."""
@@ -60,7 +57,6 @@ def fe(s, *args, **kwargs):
     return jinja2.Markup(s.format(*args, **kwargs))
 
 
-@register.filter
 def nl2br(string):
     """Turn newlines into <br>."""
     if not string:
@@ -68,8 +64,7 @@ def nl2br(string):
     return jinja2.Markup('<br>'.join(jinja2.escape(string).splitlines()))
 
 
-@register.filter
-def datetime(t, fmt=None):
+def datetime_filter(t, fmt=None):
     """Call ``datetime.strftime`` with the given format string."""
     if fmt is None:
         fmt = _(u'%B %e, %Y')
@@ -80,19 +75,16 @@ def datetime(t, fmt=None):
     return smart_text(t.strftime(fmt)) if t else ''
 
 
-@register.filter
 def ifeq(a, b, text):
     """Return ``text`` if ``a == b``."""
     return jinja2.Markup(text if a == b else '')
 
 
-@register.filter
 def class_selected(a, b):
     """Return ``'class="selected"'`` if ``a == b``."""
     return ifeq(a, b, 'class="selected"')
 
 
-@register.filter
 def field_attrs(field_inst, **kwargs):
     """Adds html attributes to django form fields"""
     for k, v in kwargs.items():
@@ -106,13 +98,11 @@ def field_attrs(field_inst, **kwargs):
     return field_inst
 
 
-@register.function(override=False)
 def url(viewname, *args, **kwargs):
     """Return URL using django's ``reverse()`` function."""
     return reverse(viewname, args=args, kwargs=kwargs)
 
 
-@register.filter
 def urlparams(url_, fragment=None, query_dict=None, **query):
     """
 Add a fragment and/or query parameters to a URL.
@@ -144,3 +134,21 @@ names, which will be replaced.
     new = urlparse.ParseResult(url_.scheme, url_.netloc, url_.path,
                                url_.params, query_string, fragment)
     return new.geturl()
+
+
+class JingoExtension(Extension):
+    def __init__(self, environment):
+        environment.globals.update({
+            'csrf': csrf,
+            'url': url,
+        })
+        environment.filters.update({
+            'class_selected': class_selected,
+            'datetime': datetime_filter,
+            'f': f,
+            'fe': fe,
+            'field_attrs': field_attrs,
+            'ifeq': ifeq,
+            'nl2br': nl2br,
+            'urlparams': urlparams,
+        })

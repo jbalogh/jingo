@@ -132,7 +132,7 @@ def get_env():
 
     opts = {
         'trim_blocks': True,
-        'extensions': ['jinja2.ext.i18n'],
+        'extensions': ['jinja2.ext.i18n', 'jingo.ext.JingoExtension'],
         'autoescape': True,
         'auto_reload': settings.DEBUG,
         'loader': jinja2.ChoiceLoader(loaders),
@@ -180,8 +180,6 @@ def load_helpers():
     if _helpers_loaded:
         return
     _helpers_loaded = True
-
-    from jingo import helpers  # noqa
 
     for config in apps.get_app_configs():
         if not has_helpers(config):

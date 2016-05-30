@@ -15,7 +15,7 @@ except ImportError:
     from mock import patch
 from nose.tools import eq_
 
-from jingo import helpers
+from jingo import ext as helpers
 from jingo import register
 
 from .utils import htmleq_, render
@@ -122,7 +122,7 @@ def test_datetime():
 
 def test_datetime_unicode():
     fmt = u"%Y 年 %m 月 %e 日"
-    helpers.datetime(datetime.now(), fmt)
+    helpers.datetime_filter(datetime.now(), fmt)
 
 
 def test_ifeq():
