@@ -10,7 +10,7 @@ except ImportError:
 from django.core.urlresolvers import reverse
 from django.http import QueryDict
 from django.template.defaulttags import CsrfTokenNode
-from django.utils import six
+import six
 from django.utils.encoding import smart_str
 try:
     from django.utils.encoding import smart_unicode as smart_text

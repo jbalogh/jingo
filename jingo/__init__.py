@@ -5,11 +5,15 @@ from __future__ import unicode_literals
 import functools
 import logging
 import re
+from copy import deepcopy
 
 from django.apps import apps
 from django.conf import settings
-from django.template.base import Origin, TemplateDoesNotExist
-from django.template.loader import BaseLoader
+from django.template.base import Origin
+try:
+    from django.template.loader import BaseLoader
+except ImportError:
+    from django.template.loaders.base import Loader as BaseLoader
 
 try:
     from importlib import import_module
@@ -72,6 +76,8 @@ log = logging.getLogger('jingo')
 
 _helpers_loaded = False
 
+class TemplateDoesNotExist(Exception):
+    pass
 
 class Template(jinja2.Template):
 
@@ -94,7 +100,8 @@ class Template(jinja2.Template):
             context = FakeRequestContext()
 
         # Used by debug_toolbar.
-        if settings.TEMPLATE_DEBUG:
+        TEMPLATES_copy = deepcopy(settings.TEMPLATES)
+        if TEMPLATES_copy[0]['OPTIONS']['debug']:
             from django.test import signals
             self.origin = Origin(self.filename)
             signals.template_rendered.send(sender=self, template=self,
@@ -235,7 +242,7 @@ register = Register()
 class Loader(BaseLoader):
     is_usable = True
 
-    def __init__(self):
+    def __init__(self, args=None):
         if has_engine:
             super(Loader, self).__init__(Engine.get_default())
         else:

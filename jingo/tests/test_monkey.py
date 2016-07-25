@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django import forms
-from django.utils import six
+import six
 
 from jinja2 import escape
 from nose.tools import eq_

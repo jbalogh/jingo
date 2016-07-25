@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-from django.conf.urls import patterns
+from django.conf.urls import url
 
 
-urlpatterns = patterns('',
-    (r'^url/(\d+)/(\w+)/$', lambda r: None, {}, "url-args"),
-    (r'^url/(?P<num>\d+)/(?P<word>\w+)/$', lambda r: None, {}, "url-kwargs"),
-)
+urlpatterns = [
+    url(r'^url/(\d+)/(\w+)/$', lambda r: None, {}, "url-args"),
+    url(r'^url/(?P<num>\d+)/(?P<word>\w+)/$', lambda r: None, {}, "url-kwargs"),
+]

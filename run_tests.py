@@ -10,9 +10,11 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'fake_settings'
 os.environ['PYTHONPATH'] = os.pathsep.join([ROOT,
                                             os.path.join(ROOT, 'examples')])
 
+import django
+if hasattr(django, 'setup'):
+    django.setup()
+
+from django.contrib.contenttypes.models import ContentType
+
 if __name__ == '__main__':
-    if hasattr(django, 'setup'):
-        # Django's app registry was added in 1.7. We need to call `setup` to
-        # initiate it.
-        django.setup()
     nose.main()

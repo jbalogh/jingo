@@ -7,7 +7,7 @@ import cgi
 from datetime import datetime
 from collections import namedtuple
 
-from django.utils import six
+import six
 from jinja2 import Markup
 try:
     from unittest.mock import patch
