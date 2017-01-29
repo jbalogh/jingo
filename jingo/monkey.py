@@ -48,3 +48,7 @@ def patch():
     for cls in classes:
         if not hasattr(cls, '__html__'):
             cls.__html__ = __html__
+
+    # Make sure all helpers.py files from all installed apps are loaded
+    from jingo import load_helpers
+    load_helpers()
