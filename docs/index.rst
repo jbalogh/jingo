@@ -169,8 +169,7 @@ Since we all love L10n, let's see what it looks like in Jinja templates::
     <h2>{{ _('Reviews for {0}')|f(addon.name) }}</h2>
 
 The simple way is to use the familiar underscore and string within a ``{{ }}``
-moustache block.  ``f`` is an interpolation filter documented below.  Sphinx
-could create a link if I knew how to do that.
+moustache block.  :meth:`f` is an interpolation filter documented above.
 
 The other method uses Jinja's ``trans`` tag::
 
